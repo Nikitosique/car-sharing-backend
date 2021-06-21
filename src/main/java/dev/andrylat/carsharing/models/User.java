@@ -7,16 +7,6 @@ public class User {
     private String password;
     private String type;
 
-    public User() {
-    }
-
-    public User(int discountCardId, String email, String password, String type) {
-        this.discountCardId = discountCardId;
-        this.email = email;
-        this.password = password;
-        this.type = type;
-    }
-
     public int getId() {
         return id;
     }

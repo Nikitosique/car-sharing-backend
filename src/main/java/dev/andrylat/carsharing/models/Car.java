@@ -4,20 +4,9 @@ public class Car {
     private int id;
     private int modelId;
     private int rentCostPerMin;
-    private String regPlate;
+    private String registrationPlate;
     private String color;
     private String photo;
-
-    public Car() {
-    }
-
-    public Car(int modelId, int rentCostPerMin, String regPlate, String color, String photo) {
-        this.modelId = modelId;
-        this.rentCostPerMin = rentCostPerMin;
-        this.regPlate = regPlate;
-        this.color = color;
-        this.photo = photo;
-    }
 
     public int getId() {
         return id;
@@ -43,12 +32,12 @@ public class Car {
         this.rentCostPerMin = rentCostPerMin;
     }
 
-    public String getRegPlate() {
-        return regPlate;
+    public String getRegistrationPlate() {
+        return registrationPlate;
     }
 
-    public void setRegPlate(String regPlate) {
-        this.regPlate = regPlate;
+    public void setRegistrationPlate(String registrationPlate) {
+        this.registrationPlate = registrationPlate;
     }
 
     public String getColor() {

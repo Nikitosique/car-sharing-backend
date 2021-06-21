@@ -9,16 +9,6 @@ public class RentSession {
     private int rentSessionCost;
     private Duration rentTimeInterval;
 
-    public RentSession() {
-    }
-
-    public RentSession(int customerId, int carId, int rentSessionCost, Duration rentTimeInterval) {
-        this.customerId = customerId;
-        this.carId = carId;
-        this.rentSessionCost = rentSessionCost;
-        this.rentTimeInterval = rentTimeInterval;
-    }
-
     public int getId() {
         return id;
     }

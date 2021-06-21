@@ -1,17 +1,8 @@
 package dev.andrylat.carsharing.models;
 
-import javax.validation.constraints.NotEmpty;
-
 public class CarBrand {
     private int id;
     private String name;
-
-    public CarBrand() {
-    }
-
-    public CarBrand(String name) {
-        this.name = name;
-    }
 
     public int getId() {
         return id;

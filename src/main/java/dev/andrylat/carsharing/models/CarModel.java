@@ -10,19 +10,6 @@ public class CarModel {
     private String name;
     private String gearboxType;
 
-    public CarModel() {
-    }
-
-    public CarModel(int bodyId, int brandId, int fuelId, String name, double engineDisplacement, String gearboxType, int productionYear) {
-        this.bodyId = bodyId;
-        this.brandId = brandId;
-        this.fuelId = fuelId;
-        this.name = name;
-        this.engineDisplacement = engineDisplacement;
-        this.gearboxType = gearboxType;
-        this.productionYear = productionYear;
-    }
-
     public int getId() {
         return id;
     }

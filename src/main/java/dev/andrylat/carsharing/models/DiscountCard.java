@@ -5,14 +5,6 @@ public class DiscountCard {
     private int discountValue;
     private String cardNumber;
 
-    public DiscountCard() {
-    }
-
-    public DiscountCard(int discountValue, String cardNumber) {
-        this.discountValue = discountValue;
-        this.cardNumber = cardNumber;
-    }
-
     public int getId() {
         return id;
     }

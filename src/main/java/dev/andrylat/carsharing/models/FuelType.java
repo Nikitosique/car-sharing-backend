@@ -1,17 +1,8 @@
 package dev.andrylat.carsharing.models;
 
-import javax.validation.constraints.NotEmpty;
-
 public class FuelType {
     private int id;
     private String name;
-
-    public FuelType() {
-    }
-
-    public FuelType(String name) {
-        this.name = name;
-    }
 
     public int getId() {
         return id;

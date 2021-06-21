@@ -4,14 +4,6 @@ public class CustomerManager {
     private int customerId;
     private int managerId;
 
-    public CustomerManager() {
-    }
-
-    public CustomerManager(int customerId, int managerId) {
-        this.customerId = customerId;
-        this.managerId = managerId;
-    }
-
     public int getCustomerId() {
         return customerId;
     }
