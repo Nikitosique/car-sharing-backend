@@ -72,16 +72,16 @@ public class BodyTypeDAO {
     }
 
     public boolean deleteById(int id) {
-        int deletedRowsCounter = jdbcTemplate.update("DELETE FROM body_types WHERE id=?", id);
+        int deletedRowsNumber = jdbcTemplate.update("DELETE FROM body_types WHERE id=?", id);
 
-        return deletedRowsCounter > 0;
+        return deletedRowsNumber > 0;
     }
 
     public boolean deleteAll() {
         List<BodyType> bodyTypeList = getAll();
-        int deletedRowsCounter = jdbcTemplate.update("DELETE FROM body_types");
+        int deletedRowsNumber = jdbcTemplate.update("DELETE FROM body_types");
 
-        return deletedRowsCounter == bodyTypeList.size();
+        return deletedRowsNumber == bodyTypeList.size();
     }
 
 }
