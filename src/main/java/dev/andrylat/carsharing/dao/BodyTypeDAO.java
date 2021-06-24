@@ -14,11 +14,11 @@ import java.util.Optional;
 
 @Component
 public class BodyTypeDAO {
-    private static final String getAllQuery = "SELECT * FROM body_types";
-    private static final String getByIdQuery = "SELECT * FROM body_types WHERE id=?";
-    private static final String addQuery = "INSERT INTO body_types(name) VALUES(?)";
-    private static final String updateByIdQuery = "UPDATE body_types SET name=? WHERE id=?";
-    private static final String deleteByIdQuery = "DELETE FROM body_types WHERE id=?";
+    private static final String GET_ALL_BODY_TYPES_SQL_QUERY = "SELECT * FROM body_types";
+    private static final String GET_BODY_TYPE_BY_ID_SQL_QUERY = "SELECT * FROM body_types WHERE id=?";
+    private static final String ADD_BODY_TYPE_SQL_QUERY = "INSERT INTO body_types(name) VALUES(?)";
+    private static final String UPDATE_BODY_TYPE_BY_ID_SQL_QUERY = "UPDATE body_types SET name=? WHERE id=?";
+    private static final String DELETE_BODY_TYPE_BY_ID_SQL_QUERY = "DELETE FROM body_types WHERE id=?";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -28,11 +28,11 @@ public class BodyTypeDAO {
     }
 
     public List<BodyType> getAll() {
-        return jdbcTemplate.query(getAllQuery, new BodyTypeMapper());
+        return jdbcTemplate.query(GET_ALL_BODY_TYPES_SQL_QUERY, new BodyTypeMapper());
     }
 
     public BodyType getById(int id) {
-        return jdbcTemplate.queryForObject(getByIdQuery, new BodyTypeMapper(), id);
+        return jdbcTemplate.queryForObject(GET_BODY_TYPE_BY_ID_SQL_QUERY, new BodyTypeMapper(), id);
     }
 
     public BodyType add(BodyType bodyType) {
@@ -41,7 +41,7 @@ public class BodyTypeDAO {
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement statement =
-                            connection.prepareStatement(addQuery, new String[]{"id"});
+                            connection.prepareStatement(ADD_BODY_TYPE_SQL_QUERY, new String[]{"id"});
                     statement.setString(1, bodyType.getName());
                     return statement;
                 },
@@ -60,7 +60,7 @@ public class BodyTypeDAO {
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement statement =
-                            connection.prepareStatement(updateByIdQuery, new String[]{"id"});
+                            connection.prepareStatement(UPDATE_BODY_TYPE_BY_ID_SQL_QUERY, new String[]{"id"});
                     statement.setString(1, updatedBodyType.getName());
                     statement.setInt(2, updatedBodyType.getId());
                     return statement;
@@ -75,7 +75,7 @@ public class BodyTypeDAO {
     }
 
     public boolean deleteById(int id) {
-        int deletedRowsNumber = jdbcTemplate.update(deleteByIdQuery, id);
+        int deletedRowsNumber = jdbcTemplate.update(DELETE_BODY_TYPE_BY_ID_SQL_QUERY, id);
 
         return deletedRowsNumber > 0;
     }
