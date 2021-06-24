@@ -1,11 +1,13 @@
 package dev.andrylat.carsharing.dao;
 
+import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.BodyType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlMergeMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,9 @@ class BodyTypeDAOTest {
     private BodyTypeDAO bodyTypeDAO;
 
     @Test
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    @Sql({"classpath:initalscripts/dao/bodytype/BodyTypeDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
-        bodyTypeDAO.deleteAll();
         List<BodyType> expected = new ArrayList<>();
         List<BodyType> actual = bodyTypeDAO.getAll();
         assertEquals(expected, actual);
@@ -65,7 +68,7 @@ class BodyTypeDAOTest {
     public void updateById_ShouldThrownException_WhenUpdatedRecordNotExists() {
         BodyType updatedBodyType = new BodyType(0, "New Type");
 
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(RecordNotFoundException.class, () -> {
             bodyTypeDAO.updateById(updatedBodyType);
         });
     }
@@ -89,13 +92,6 @@ class BodyTypeDAOTest {
     public void deleteById_ShouldDeleteRecord_WhenDeletedRecordExists() {
         boolean expected = true;
         boolean actual = bodyTypeDAO.deleteById(1);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void deleteAll_ShouldDeleteAllRecords_WhenDeletedRecordsExist() {
-        boolean expected = true;
-        boolean actual = bodyTypeDAO.deleteAll();
         assertEquals(expected, actual);
     }
 

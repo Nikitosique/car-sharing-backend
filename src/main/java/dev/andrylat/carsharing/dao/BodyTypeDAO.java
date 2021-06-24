@@ -1,8 +1,8 @@
 package dev.andrylat.carsharing.dao;
 
+import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.BodyType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -14,6 +14,12 @@ import java.util.Optional;
 
 @Component
 public class BodyTypeDAO {
+    private static final String getAllQuery = "SELECT * FROM body_types";
+    private static final String getByIdQuery = "SELECT * FROM body_types WHERE id=?";
+    private static final String addQuery = "INSERT INTO body_types(name) VALUES(?)";
+    private static final String updateByIdQuery = "UPDATE body_types SET name=? WHERE id=?";
+    private static final String deleteByIdQuery = "DELETE FROM body_types WHERE id=?";
+
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -22,14 +28,11 @@ public class BodyTypeDAO {
     }
 
     public List<BodyType> getAll() {
-        return jdbcTemplate.query("SELECT * FROM body_types", new BodyTypeMapper());
+        return jdbcTemplate.query(getAllQuery, new BodyTypeMapper());
     }
 
     public BodyType getById(int id) {
-        return jdbcTemplate.query("SELECT * FROM body_types WHERE id=?", new BodyTypeMapper(), id)
-                .stream()
-                .findAny()
-                .orElseThrow(() -> new EmptyResultDataAccessException("Could not find record with id " + id, 1));
+        return jdbcTemplate.queryForObject(getByIdQuery, new BodyTypeMapper(), id);
     }
 
     public BodyType add(BodyType bodyType) {
@@ -38,7 +41,7 @@ public class BodyTypeDAO {
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement statement =
-                            connection.prepareStatement("INSERT INTO body_types(name) VALUES(?)", new String[]{"id"});
+                            connection.prepareStatement(addQuery, new String[]{"id"});
                     statement.setString(1, bodyType.getName());
                     return statement;
                 },
@@ -46,7 +49,7 @@ public class BodyTypeDAO {
 
         Optional<Number> insertedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
         int insertedRecordId = (int) insertedRecordIdOptional
-                .orElseThrow(() -> new NullPointerException("Data insertion has failed! Couldn't get inserted record!"));
+                .orElseThrow(() -> new RecordNotFoundException("Data insertion has failed! Couldn't get inserted record!"));
 
         return getById(insertedRecordId);
     }
@@ -57,7 +60,7 @@ public class BodyTypeDAO {
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement statement =
-                            connection.prepareStatement("UPDATE body_types SET name=? WHERE id=?", new String[]{"id"});
+                            connection.prepareStatement(updateByIdQuery, new String[]{"id"});
                     statement.setString(1, updatedBodyType.getName());
                     statement.setInt(2, updatedBodyType.getId());
                     return statement;
@@ -66,22 +69,15 @@ public class BodyTypeDAO {
 
         Optional<Number> updatedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
         int updatedRecordId = (int) updatedRecordIdOptional
-                .orElseThrow(() -> new NullPointerException("Data update has failed! Couldn't get inserted record!"));
+                .orElseThrow(() -> new RecordNotFoundException("Data update has failed! Couldn't get inserted record!"));
 
         return getById(updatedRecordId);
     }
 
     public boolean deleteById(int id) {
-        int deletedRowsNumber = jdbcTemplate.update("DELETE FROM body_types WHERE id=?", id);
+        int deletedRowsNumber = jdbcTemplate.update(deleteByIdQuery, id);
 
         return deletedRowsNumber > 0;
-    }
-
-    public boolean deleteAll() {
-        List<BodyType> bodyTypeList = getAll();
-        int deletedRowsNumber = jdbcTemplate.update("DELETE FROM body_types");
-
-        return deletedRowsNumber == bodyTypeList.size();
     }
 
 }
