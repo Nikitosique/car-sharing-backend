@@ -1,5 +1,6 @@
 package dev.andrylat.carsharing.dao;
 
+import dev.andrylat.carsharing.dao.mappers.BodyTypeMapper;
 import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.BodyType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,7 @@ public class BodyTypeDAO {
 
         jdbcTemplate.update(
                 connection -> {
-                    PreparedStatement statement =
-                            connection.prepareStatement(ADD_BODY_TYPE_SQL_QUERY, new String[]{"id"});
+                    PreparedStatement statement = connection.prepareStatement(ADD_BODY_TYPE_SQL_QUERY, new String[]{"id"});
                     statement.setString(1, bodyType.getName());
                     return statement;
                 },
@@ -59,8 +59,7 @@ public class BodyTypeDAO {
 
         jdbcTemplate.update(
                 connection -> {
-                    PreparedStatement statement =
-                            connection.prepareStatement(UPDATE_BODY_TYPE_BY_ID_SQL_QUERY, new String[]{"id"});
+                    PreparedStatement statement = connection.prepareStatement(UPDATE_BODY_TYPE_BY_ID_SQL_QUERY, new String[]{"id"});
                     statement.setString(1, updatedBodyType.getName());
                     statement.setInt(2, updatedBodyType.getId());
                     return statement;

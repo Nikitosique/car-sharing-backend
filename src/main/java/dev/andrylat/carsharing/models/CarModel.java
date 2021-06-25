@@ -1,6 +1,11 @@
 package dev.andrylat.carsharing.models;
 
+import java.util.Objects;
+
 public class CarModel {
+    private static final int PRIME_ODD_NUMBER = 31;
+    private static final int BITS_NUMBER = 32;
+
     private int id;
     private int bodyId;
     private int brandId;
@@ -73,4 +78,45 @@ public class CarModel {
     public void setProductionYear(int productionYear) {
         this.productionYear = productionYear;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (this.getClass() != other.getClass()) {
+            return false;
+        }
+
+        CarModel carModel = (CarModel) other;
+
+        return id == carModel.id
+                && bodyId == carModel.bodyId
+                && brandId == carModel.brandId
+                && fuelId == carModel.fuelId
+                && productionYear == carModel.productionYear
+                && engineDisplacement == carModel.engineDisplacement
+                && Objects.equals(name, carModel.name)
+                && Objects.equals(gearboxType, carModel.gearboxType);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = PRIME_ODD_NUMBER * result + id;
+        result = PRIME_ODD_NUMBER * result + bodyId;
+        result = PRIME_ODD_NUMBER * result + brandId;
+        result = PRIME_ODD_NUMBER * result + fuelId;
+        result = PRIME_ODD_NUMBER * result + productionYear;
+
+        long engineDisplacementBits = Double.doubleToLongBits(engineDisplacement);
+        result = PRIME_ODD_NUMBER * result + (int) (engineDisplacementBits ^ (engineDisplacementBits >>> BITS_NUMBER));
+
+        result = PRIME_ODD_NUMBER * result + (name == null ? 0 : name.hashCode());
+        result = PRIME_ODD_NUMBER * result + (gearboxType == null ? 0 : gearboxType.hashCode());
+
+        return result;
+    }
+
 }

@@ -1,9 +1,10 @@
 package dev.andrylat.carsharing.models;
 
 public class BodyType {
+    private static final int PRIME_ODD_NUMBER = 31;
+
     private int id;
     private String name;
-    private static final int PRIME_ODD_NUMBER = 31;
 
     public BodyType() {
     }

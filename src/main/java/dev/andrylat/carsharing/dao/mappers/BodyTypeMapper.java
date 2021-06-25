@@ -1,4 +1,4 @@
-package dev.andrylat.carsharing.dao;
+package dev.andrylat.carsharing.dao.mappers;
 
 import dev.andrylat.carsharing.models.BodyType;
 import org.springframework.jdbc.core.RowMapper;
