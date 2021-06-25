@@ -25,8 +25,7 @@ public class CarModelDAO {
 
     private static final String UPDATE_CAR_MODEL_BY_ID_SQL_QUERY = "UPDATE car_models SET body_id=?, brand_id=?, model_name=?, " +
             "engine_displacement=?, fuel_id=?, gearbox_type=?, production_year=? WHERE id=?";
-
-
+    
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
