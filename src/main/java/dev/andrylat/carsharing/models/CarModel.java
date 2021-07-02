@@ -96,7 +96,7 @@ public class CarModel {
                 && brandId == carModel.brandId
                 && fuelId == carModel.fuelId
                 && productionYear == carModel.productionYear
-                && engineDisplacement == carModel.engineDisplacement
+                && Double.compare(engineDisplacement, carModel.engineDisplacement) == 0
                 && Objects.equals(name, carModel.name)
                 && Objects.equals(gearboxType, carModel.gearboxType);
     }
@@ -104,6 +104,7 @@ public class CarModel {
     @Override
     public int hashCode() {
         int result = 17;
+
         result = PRIME_ODD_NUMBER * result + id;
         result = PRIME_ODD_NUMBER * result + bodyId;
         result = PRIME_ODD_NUMBER * result + brandId;

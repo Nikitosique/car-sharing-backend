@@ -1,13 +1,12 @@
 package dev.andrylat.carsharing.config;
 
+import com.opentable.db.postgres.embedded.EmbeddedPostgres;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -16,18 +15,17 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 
 @Configuration
 @ComponentScan("dev.andrylat.carsharing")
 @EnableWebMvc
 public class SpringConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
-    private final Environment environment;
 
     @Autowired
-    public SpringConfig(ApplicationContext applicationContext, Environment environment) {
+    public SpringConfig(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        this.environment = environment;
     }
 
     @Bean
@@ -58,20 +56,29 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    @Profile("!test")
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(dataSource());
     }
 
     @Bean
+    @Profile("!test")
+    @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        return DataSourceBuilder.create().build();
+    }
 
-        dataSource.setDriverClassName(environment.getRequiredProperty("spring.datasource.driver-class-name"));
-        dataSource.setUrl(environment.getRequiredProperty("spring.datasource.url"));
-        dataSource.setUsername(environment.getRequiredProperty("spring.datasource.username"));
-        dataSource.setPassword(environment.getRequiredProperty("spring.datasource.password"));
+    @Bean
+    @Profile("test")
+    public JdbcTemplate testJdbcTemplate() throws IOException {
+        return new JdbcTemplate(testDataSource());
+    }
 
-        return dataSource;
+    @Bean
+    @Profile("test")
+    public DataSource testDataSource() throws IOException {
+        EmbeddedPostgres pg = EmbeddedPostgres.start();
+        return pg.getPostgresDatabase();
     }
 
 }

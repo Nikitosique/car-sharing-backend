@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @Sql({"classpath:initalscripts/dao/bodytype/BodyTypeTableCreation.sql",
         "classpath:initalscripts/dao/bodytype/BodyTypeDataInsertion.sql"})
 @Sql(scripts = "classpath:initalscripts/dao/bodytype/BodyTypeTableDropping.sql",
@@ -46,6 +48,7 @@ class BodyTypeDAOTest {
     @Test
     public void getById_ShouldThrownException_WhenRecordWithSuchIdNotExists() {
         assertThrows(EmptyResultDataAccessException.class, () -> {
+
             bodyTypeDAO.getById(0);
         });
     }

@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 public class BodyTypeMapper implements RowMapper<BodyType> {
 
     @Override
@@ -18,4 +17,5 @@ public class BodyTypeMapper implements RowMapper<BodyType> {
 
         return bodyType;
     }
+
 }

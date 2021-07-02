@@ -1,5 +1,7 @@
 package dev.andrylat.carsharing.models;
 
+import java.util.Objects;
+
 public class BodyType {
     private static final int PRIME_ODD_NUMBER = 31;
 
@@ -42,15 +44,17 @@ public class BodyType {
 
         BodyType bodyType = (BodyType) other;
 
-        return id == bodyType.id &&
-                name.equals(bodyType.name);
+        return id == bodyType.id
+                && Objects.equals(name, bodyType.name);
     }
 
     @Override
     public int hashCode() {
         int result = 17;
+
         result = PRIME_ODD_NUMBER * result + id;
         result = PRIME_ODD_NUMBER * result + (name == null ? 0 : name.hashCode());
+
         return result;
     }
 

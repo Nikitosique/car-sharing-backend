@@ -25,7 +25,7 @@ public class CarModelDAO {
 
     private static final String UPDATE_CAR_MODEL_BY_ID_SQL_QUERY = "UPDATE car_models SET body_id=?, brand_id=?, model_name=?, " +
             "engine_displacement=?, fuel_id=?, gearbox_type=?, production_year=? WHERE id=?";
-    
+
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -62,7 +62,8 @@ public class CarModelDAO {
         int insertedRecordId = (int) insertedRecordIdOptional
                 .orElseThrow(() -> new RecordNotFoundException("Data insertion has failed! Couldn't get inserted record!"));
 
-        return getById(insertedRecordId);
+        carModel.setId(insertedRecordId);
+        return carModel;
     }
 
     public CarModel updateById(CarModel updatedCarModel) {
@@ -85,9 +86,10 @@ public class CarModelDAO {
 
         Optional<Number> updatedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
         int updatedRecordId = (int) updatedRecordIdOptional
-                .orElseThrow(() -> new RecordNotFoundException("Data update has failed! Couldn't get inserted record!"));
+                .orElseThrow(() -> new RecordNotFoundException("Data update has failed! Couldn't get updated record!"));
 
-        return getById(updatedRecordId);
+        updatedCarModel.setId(updatedRecordId);
+        return updatedCarModel;
     }
 
     public boolean deleteById(int id) {

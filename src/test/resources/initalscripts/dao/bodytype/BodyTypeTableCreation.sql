@@ -1,6 +1,6 @@
-CREATE TABLE IF NOT EXISTS body_types
+CREATE TABLE body_types
 (
     id   SERIAL PRIMARY KEY,
-    name VARCHAR(30) UNIQUE NOT NULL
+    name TEXT UNIQUE NOT NULL
 );
 

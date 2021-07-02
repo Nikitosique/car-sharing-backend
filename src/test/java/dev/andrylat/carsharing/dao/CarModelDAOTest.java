@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
 
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @Sql({"classpath:initalscripts/dao/carmodel/CarModelTableCreation.sql",
         "classpath:initalscripts/dao/carmodel/CarModelDataInsertion.sql"})
 @Sql(scripts = "classpath:initalscripts/dao/carmodel/CarModelTableDropping.sql",
@@ -109,7 +111,6 @@ class CarModelDAOTest {
         expected.setProductionYear(2021);
 
         CarModel added = new CarModel();
-        added.setId(4);
         added.setBrandId(10);
         added.setName("Model-CFS");
         added.setEngineDisplacement(2.3);

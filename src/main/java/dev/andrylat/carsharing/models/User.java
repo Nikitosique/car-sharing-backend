@@ -1,6 +1,10 @@
 package dev.andrylat.carsharing.models;
 
+import java.util.Objects;
+
 public class User {
+    private static final int PRIME_ODD_NUMBER = 31;
+
     private int id;
     private int discountCardId;
     private String email;
@@ -45,6 +49,38 @@ public class User {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+
+        User user = (User) other;
+
+        return id == user.id
+                && discountCardId == user.discountCardId
+                && Objects.equals(email, user.email)
+                && Objects.equals(password, user.password)
+                && Objects.equals(type, user.type);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+
+        result = PRIME_ODD_NUMBER * result + id;
+        result = PRIME_ODD_NUMBER * result + discountCardId;
+        result = PRIME_ODD_NUMBER * result + (email == null ? 0 : email.hashCode());
+        result = PRIME_ODD_NUMBER * result + (password == null ? 0 : password.hashCode());
+        result = PRIME_ODD_NUMBER * result + (type == null ? 0 : type.hashCode());
+
+        return result;
     }
 
 }

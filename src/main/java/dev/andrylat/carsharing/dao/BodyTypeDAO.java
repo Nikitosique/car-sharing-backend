@@ -51,7 +51,8 @@ public class BodyTypeDAO {
         int insertedRecordId = (int) insertedRecordIdOptional
                 .orElseThrow(() -> new RecordNotFoundException("Data insertion has failed! Couldn't get inserted record!"));
 
-        return getById(insertedRecordId);
+        bodyType.setId(insertedRecordId);
+        return bodyType;
     }
 
     public BodyType updateById(BodyType updatedBodyType) {
@@ -68,9 +69,10 @@ public class BodyTypeDAO {
 
         Optional<Number> updatedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
         int updatedRecordId = (int) updatedRecordIdOptional
-                .orElseThrow(() -> new RecordNotFoundException("Data update has failed! Couldn't get inserted record!"));
+                .orElseThrow(() -> new RecordNotFoundException("Data update has failed! Couldn't get updated record!"));
 
-        return getById(updatedRecordId);
+        updatedBodyType.setId(updatedRecordId);
+        return updatedBodyType;
     }
 
     public boolean deleteById(int id) {

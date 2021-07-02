@@ -1,12 +1,10 @@
 package dev.andrylat.carsharing.dao.mappers;
 
-import dev.andrylat.carsharing.models.BodyType;
 import dev.andrylat.carsharing.models.CarModel;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 
 public class CarModelMapper implements RowMapper<CarModel> {
 
@@ -25,4 +23,5 @@ public class CarModelMapper implements RowMapper<CarModel> {
 
         return carModel;
     }
+
 }
