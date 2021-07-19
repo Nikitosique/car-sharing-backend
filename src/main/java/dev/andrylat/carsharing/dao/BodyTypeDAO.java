@@ -4,6 +4,7 @@ import dev.andrylat.carsharing.dao.mappers.BodyTypeMapper;
 import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.BodyType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 @Component
 public class BodyTypeDAO {
-    private static final String GET_ALL_BODY_TYPES_SQL_QUERY = "SELECT * FROM body_types";
+    private static final String GET_ALL_BODY_TYPES_SQL_QUERY = "SELECT * from body_types ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_BODY_TYPE_BY_ID_SQL_QUERY = "SELECT * FROM body_types WHERE id=?";
     private static final String ADD_BODY_TYPE_SQL_QUERY = "INSERT INTO body_types(name) VALUES(?)";
     private static final String UPDATE_BODY_TYPE_BY_ID_SQL_QUERY = "UPDATE body_types SET name=? WHERE id=?";
@@ -28,8 +29,10 @@ public class BodyTypeDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<BodyType> getAll() {
-        return jdbcTemplate.query(GET_ALL_BODY_TYPES_SQL_QUERY, new BodyTypeMapper());
+    public List<BodyType> getAll(int pageNumber, int pageSize) {
+        PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+
+        return jdbcTemplate.query(GET_ALL_BODY_TYPES_SQL_QUERY, new BodyTypeMapper(), pageable.getPageSize(), pageable.getPageNumber());
     }
 
     public BodyType getById(int id) {
@@ -55,24 +58,10 @@ public class BodyTypeDAO {
         return bodyType;
     }
 
-    public BodyType updateById(BodyType updatedBodyType) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+    public boolean updateById(BodyType updatedBodyType) {
+        int updatedRowsNumber = jdbcTemplate.update(UPDATE_BODY_TYPE_BY_ID_SQL_QUERY, updatedBodyType.getName(), updatedBodyType.getId());
 
-        jdbcTemplate.update(
-                connection -> {
-                    PreparedStatement statement = connection.prepareStatement(UPDATE_BODY_TYPE_BY_ID_SQL_QUERY, new String[]{"id"});
-                    statement.setString(1, updatedBodyType.getName());
-                    statement.setInt(2, updatedBodyType.getId());
-                    return statement;
-                },
-                keyHolder);
-
-        Optional<Number> updatedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
-        int updatedRecordId = (int) updatedRecordIdOptional
-                .orElseThrow(() -> new RecordNotFoundException("Data update has failed! Couldn't get updated record!"));
-
-        updatedBodyType.setId(updatedRecordId);
-        return updatedBodyType;
+        return updatedRowsNumber > 0;
     }
 
     public boolean deleteById(int id) {

@@ -12,7 +12,7 @@ public class BodyTypeMapper implements RowMapper<BodyType> {
     public BodyType mapRow(ResultSet resultSet, int i) throws SQLException {
         BodyType bodyType = new BodyType();
 
-        bodyType.setId(resultSet.getInt("id"));
+        bodyType.setId(resultSet.getLong("id"));
         bodyType.setName(resultSet.getString("name"));
 
         return bodyType;

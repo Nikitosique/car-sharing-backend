@@ -1,6 +1,5 @@
 package dev.andrylat.carsharing.dao;
 
-import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.BodyType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,25 +29,30 @@ class BodyTypeDAOTest {
     @Sql({"classpath:initalscripts/dao/bodytype/BodyTypeDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
         List<BodyType> expected = new ArrayList<>();
-        List<BodyType> actual = bodyTypeDAO.getAll();
+
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<BodyType> actual = bodyTypeDAO.getAll(pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void getAll_ShouldReturnAllRecords_WhenTableIsNotEmpty() {
+    public void getAll_ShouldReturnFirstPageWithRecords_WhenTableIsNotEmpty() {
         List<BodyType> expected = new ArrayList<>(List.of(
                 new BodyType(1, "sedan"),
-                new BodyType(2, "coupe"),
-                new BodyType(3, "sport car")));
+                new BodyType(2, "coupe")));
 
-        List<BodyType> actual = bodyTypeDAO.getAll();
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<BodyType> actual = bodyTypeDAO.getAll(pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
     @Test
     public void getById_ShouldThrownException_WhenRecordWithSuchIdNotExists() {
         assertThrows(EmptyResultDataAccessException.class, () -> {
-
             bodyTypeDAO.getById(0);
         });
     }
@@ -68,19 +72,22 @@ class BodyTypeDAOTest {
     }
 
     @Test
-    public void updateById_ShouldThrownException_WhenUpdatedRecordNotExists() {
-        BodyType updatedBodyType = new BodyType(0, "New Type");
+    public void updateById_ShouldNotUpdateRecord_WhenUpdatedRecordNotExists() {
+        boolean expected = false;
 
-        assertThrows(RecordNotFoundException.class, () -> {
-            bodyTypeDAO.updateById(updatedBodyType);
-        });
+        BodyType updatedBodyType = new BodyType(0, "New Type");
+        boolean actual = bodyTypeDAO.updateById(updatedBodyType);
+
+        assertEquals(expected, actual);
     }
 
     @Test
     public void updateById_ShouldUpdateRecord_WhenUpdatedRecordExists() {
-        BodyType expected = new BodyType(1, "New Type");
+        boolean expected = true;
+
         BodyType updatedBodyType = new BodyType(1, "New Type");
-        BodyType actual = bodyTypeDAO.updateById(updatedBodyType);
+        boolean actual = bodyTypeDAO.updateById(updatedBodyType);
+
         assertEquals(expected, actual);
     }
 
