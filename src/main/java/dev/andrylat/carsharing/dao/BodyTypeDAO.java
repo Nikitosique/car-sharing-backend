@@ -51,7 +51,7 @@ public class BodyTypeDAO {
                 keyHolder);
 
         Optional<Number> insertedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
-        int insertedRecordId = (int) insertedRecordIdOptional
+        long insertedRecordId = insertedRecordIdOptional.map(Number::longValue)
                 .orElseThrow(() -> new RecordNotFoundException("Data insertion has failed! Couldn't get inserted record!"));
 
         bodyType.setId(insertedRecordId);
