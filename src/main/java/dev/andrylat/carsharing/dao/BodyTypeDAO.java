@@ -35,7 +35,7 @@ public class BodyTypeDAO {
         return jdbcTemplate.query(GET_ALL_BODY_TYPES_SQL_QUERY, new BodyTypeMapper(), pageable.getPageSize(), pageable.getPageNumber());
     }
 
-    public BodyType getById(int id) {
+    public BodyType getById(long id) {
         return jdbcTemplate.queryForObject(GET_BODY_TYPE_BY_ID_SQL_QUERY, new BodyTypeMapper(), id);
     }
 
@@ -64,7 +64,7 @@ public class BodyTypeDAO {
         return updatedRowsNumber > 0;
     }
 
-    public boolean deleteById(int id) {
+    public boolean deleteById(long id) {
         int deletedRowsNumber = jdbcTemplate.update(DELETE_BODY_TYPE_BY_ID_SQL_QUERY, id);
 
         return deletedRowsNumber > 0;
