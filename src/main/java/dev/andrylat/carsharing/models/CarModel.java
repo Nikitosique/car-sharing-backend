@@ -3,47 +3,44 @@ package dev.andrylat.carsharing.models;
 import java.util.Objects;
 
 public class CarModel {
-    private static final int PRIME_ODD_NUMBER = 31;
-    private static final int BITS_NUMBER = 32;
-
-    private int id;
-    private int bodyId;
-    private int brandId;
-    private int fuelId;
+    private long id;
+    private long bodyId;
+    private long brandId;
+    private long fuelId;
     private int productionYear;
     private double engineDisplacement;
     private String name;
     private String gearboxType;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getBodyId() {
+    public long getBodyId() {
         return bodyId;
     }
 
-    public void setBodyId(int bodyId) {
+    public void setBodyId(long bodyId) {
         this.bodyId = bodyId;
     }
 
-    public int getBrandId() {
+    public long getBrandId() {
         return brandId;
     }
 
-    public void setBrandId(int brandId) {
+    public void setBrandId(long brandId) {
         this.brandId = brandId;
     }
 
-    public int getFuelId() {
+    public long getFuelId() {
         return fuelId;
     }
 
-    public void setFuelId(int fuelId) {
+    public void setFuelId(long fuelId) {
         this.fuelId = fuelId;
     }
 
@@ -105,17 +102,17 @@ public class CarModel {
     public int hashCode() {
         int result = 17;
 
-        result = PRIME_ODD_NUMBER * result + id;
-        result = PRIME_ODD_NUMBER * result + bodyId;
-        result = PRIME_ODD_NUMBER * result + brandId;
-        result = PRIME_ODD_NUMBER * result + fuelId;
-        result = PRIME_ODD_NUMBER * result + productionYear;
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (bodyId ^ (bodyId >>> 32));
+        result = 31 * result + (int) (brandId ^ (brandId >>> 32));
+        result = 31 * result + (int) (fuelId ^ (fuelId >>> 32));
+        result = 31 * result + productionYear;
 
         long engineDisplacementBits = Double.doubleToLongBits(engineDisplacement);
-        result = PRIME_ODD_NUMBER * result + (int) (engineDisplacementBits ^ (engineDisplacementBits >>> BITS_NUMBER));
+        result = 31 * result + (int) (engineDisplacementBits ^ (engineDisplacementBits >>> 32));
 
-        result = PRIME_ODD_NUMBER * result + (name == null ? 0 : name.hashCode());
-        result = PRIME_ODD_NUMBER * result + (gearboxType == null ? 0 : gearboxType.hashCode());
+        result = 31 * result + (name == null ? 0 : name.hashCode());
+        result = 31 * result + (gearboxType == null ? 0 : gearboxType.hashCode());
 
         return result;
     }

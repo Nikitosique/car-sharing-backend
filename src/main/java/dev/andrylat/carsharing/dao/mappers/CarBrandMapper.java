@@ -12,7 +12,7 @@ public class CarBrandMapper implements RowMapper<CarBrand> {
     public CarBrand mapRow(ResultSet resultSet, int i) throws SQLException {
         CarBrand carBrand = new CarBrand();
 
-        carBrand.setId(resultSet.getInt("id"));
+        carBrand.setId(resultSet.getLong("id"));
         carBrand.setName(resultSet.getString("name"));
 
         return carBrand;

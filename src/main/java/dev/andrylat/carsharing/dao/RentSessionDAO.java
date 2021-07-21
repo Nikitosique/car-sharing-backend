@@ -4,6 +4,7 @@ import dev.andrylat.carsharing.dao.mappers.RentSessionMapper;
 import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.RentSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 @Component
 public class RentSessionDAO {
-    private static final String GET_ALL_RENT_SESSIONS_SQL_QUERY = "SELECT * FROM rent_sessions";
+    private static final String GET_ALL_RENT_SESSIONS_SQL_QUERY = "SELECT * FROM rent_sessions ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_RENT_SESSION_BY_ID_SQL_QUERY = "SELECT * FROM rent_sessions WHERE id=?";
     private static final String DELETE_RENT_SESSION_BY_ID_SQL_QUERY = "DELETE FROM rent_sessions WHERE id=?";
 
@@ -32,11 +33,13 @@ public class RentSessionDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<RentSession> getAll() {
-        return jdbcTemplate.query(GET_ALL_RENT_SESSIONS_SQL_QUERY, new RentSessionMapper());
+    public List<RentSession> getAll(int pageNumber, int pageSize) {
+        PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+
+        return jdbcTemplate.query(GET_ALL_RENT_SESSIONS_SQL_QUERY, new RentSessionMapper(), pageable.getPageSize(), pageable.getPageNumber());
     }
 
-    public RentSession getById(int id) {
+    public RentSession getById(long id) {
         return jdbcTemplate.queryForObject(GET_RENT_SESSION_BY_ID_SQL_QUERY, new RentSessionMapper(), id);
     }
 
@@ -46,8 +49,8 @@ public class RentSessionDAO {
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement statement = connection.prepareStatement(ADD_RENT_SESSION_SQL_QUERY, new String[]{"id"});
-                    statement.setInt(1, rentSession.getCustomerId());
-                    statement.setInt(2, rentSession.getCarId());
+                    statement.setLong(1, rentSession.getCustomerId());
+                    statement.setLong(2, rentSession.getCarId());
                     statement.setObject(3, rentSession.getRentTimeInterval());
                     statement.setInt(4, rentSession.getRentSessionCost());
                     return statement;
@@ -55,37 +58,29 @@ public class RentSessionDAO {
                 keyHolder);
 
         Optional<Number> insertedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
-        int insertedRecordId = (int) insertedRecordIdOptional
+        long insertedRecordId = insertedRecordIdOptional.map(Number::longValue)
                 .orElseThrow(() -> new RecordNotFoundException("Data insertion has failed! Couldn't get inserted record!"));
 
         rentSession.setId(insertedRecordId);
         return rentSession;
     }
 
-    public RentSession updateById(RentSession updatedRentSession) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(
+    public boolean updateById(RentSession updatedRentSession) {
+        int updatedRowsNumber = jdbcTemplate.update(
                 connection -> {
-                    PreparedStatement statement = connection.prepareStatement(UPDATE_RENT_SESSION_BY_ID_SQL_QUERY, new String[]{"id"});
-                    statement.setInt(1, updatedRentSession.getCustomerId());
-                    statement.setInt(2, updatedRentSession.getCarId());
+                    PreparedStatement statement = connection.prepareStatement(UPDATE_RENT_SESSION_BY_ID_SQL_QUERY);
+                    statement.setLong(1, updatedRentSession.getCustomerId());
+                    statement.setLong(2, updatedRentSession.getCarId());
                     statement.setObject(3, updatedRentSession.getRentTimeInterval());
                     statement.setInt(4, updatedRentSession.getRentSessionCost());
-                    statement.setInt(5, updatedRentSession.getId());
+                    statement.setLong(5, updatedRentSession.getId());
                     return statement;
-                },
-                keyHolder);
+                });
 
-        Optional<Number> updatedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
-        int updatedRecordId = (int) updatedRecordIdOptional
-                .orElseThrow(() -> new RecordNotFoundException("Data update has failed! Couldn't get updated record!"));
-
-        updatedRentSession.setId(updatedRecordId);
-        return updatedRentSession;
+        return updatedRowsNumber > 0;
     }
 
-    public boolean deleteById(int id) {
+    public boolean deleteById(long id) {
         int deletedRowsNumber = jdbcTemplate.update(DELETE_RENT_SESSION_BY_ID_SQL_QUERY, id);
 
         return deletedRowsNumber > 0;

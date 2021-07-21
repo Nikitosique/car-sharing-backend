@@ -1,6 +1,5 @@
 package dev.andrylat.carsharing.dao;
 
-import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +28,17 @@ class UserDAOTest {
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql({"classpath:initalscripts/dao/user/UserDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
-
         List<User> expected = new ArrayList<>();
-        List<User> actual = userDAO.getAll();
+
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<User> actual = userDAO.getAll(pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void getAll_ShouldReturnAllRecords_WhenTableIsNotEmpty() {
+    public void getAll_ShouldReturnFirstPageWithRecords_WhenTableIsNotEmpty() {
         List<User> expected = new ArrayList<>();
 
         User user = new User();
@@ -55,14 +57,10 @@ class UserDAOTest {
         user.setType("customer");
         expected.add(user);
 
-        user = new User();
-        user.setId(3);
-        user.setEmail("manager1@awesomecars.com");
-        user.setPassword("10w4rtEd");
-        user.setType("manager");
-        expected.add(user);
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<User> actual = userDAO.getAll(pageNumber, pageSize);
 
-        List<User> actual = userDAO.getAll();
         assertEquals(expected, actual);
     }
 
@@ -84,6 +82,7 @@ class UserDAOTest {
         expected.setType("customer");
 
         User actual = userDAO.getById(1);
+
         assertEquals(expected, actual);
     }
 
@@ -103,40 +102,39 @@ class UserDAOTest {
         added.setType("customer");
 
         User actual = userDAO.add(added);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void updateById_ShouldThrownException_WhenUpdatedRecordNotExists() {
-        User updated = new User();
-        updated.setId(0);
-        updated.setEmail("user1@gmail.com");
-        updated.setPassword("Xo9eOes");
-        updated.setDiscountCardId(1);
-        updated.setType("customer");
+    public void updateById_ShouldNotUpdateRecord_WhenUpdatedRecordNotExists() {
+        boolean expected = false;
 
-        assertThrows(RecordNotFoundException.class, () -> {
-            userDAO.updateById(updated);
-        });
+        User updatedUser = new User();
+        updatedUser.setId(0);
+        updatedUser.setEmail("user1@gmail.com");
+        updatedUser.setPassword("Xo9eOes");
+        updatedUser.setDiscountCardId(1);
+        updatedUser.setType("customer");
+
+        boolean actual = userDAO.updateById(updatedUser);
+
+        assertEquals(expected, actual);
     }
 
     @Test
     public void updateById_ShouldUpdateRecord_WhenUpdatedRecordExists() {
-        User expected = new User();
-        expected.setId(1);
-        expected.setEmail("firstUser@mail.com");
-        expected.setPassword("12345678");
-        expected.setDiscountCardId(1);
-        expected.setType("customer");
+        boolean expected = true;
 
-        User updated = new User();
-        updated.setId(1);
-        updated.setEmail("firstUser@mail.com");
-        updated.setPassword("12345678");
-        updated.setDiscountCardId(1);
-        updated.setType("customer");
+        User updatedUser = new User();
+        updatedUser.setId(1);
+        updatedUser.setEmail("firstUser@mail.com");
+        updatedUser.setPassword("12345678");
+        updatedUser.setDiscountCardId(1);
+        updatedUser.setType("customer");
 
-        User actual = userDAO.updateById(updated);
+        boolean actual = userDAO.updateById(updatedUser);
+
         assertEquals(expected, actual);
     }
 
@@ -161,8 +159,14 @@ class UserDAOTest {
     @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getCustomersIdByManagerId_ShouldReturnZeroRecords_WhenManagerWithSuchIdNotExists() {
-        List<Integer> expected = new ArrayList<>();
-        List<Integer> actual = userDAO.getCustomersIdByManagerId(0);
+        List<Long> expected = new ArrayList<>();
+
+        long managerId = 0;
+        int pageNumber = 0;
+        int pageSize = 2;
+
+        List<Long> actual = userDAO.getCustomersIdByManagerId(managerId, pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
@@ -173,15 +177,20 @@ class UserDAOTest {
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void getCustomersIdByManagerId_ShouldReturnRecords_WhenManagerWithSuchIdExists() {
-        List<Integer> expected = new ArrayList<>();
+    public void getCustomersIdByManagerId_ShouldReturnFirstPageWithRecords_WhenManagerWithSuchIdExists() {
+        List<Long> expected = new ArrayList<>();
 
-        int firstCustomerId = 1;
-        int secondCustomerId = 2;
+        long firstCustomerId = 1;
+        long secondCustomerId = 2;
         expected.add(firstCustomerId);
         expected.add(secondCustomerId);
 
-        List<Integer> actual = userDAO.getCustomersIdByManagerId(3);
+        long managerId = 3;
+        int pageNumber = 0;
+        int pageSize = 2;
+
+        List<Long> actual = userDAO.getCustomersIdByManagerId(managerId, pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
@@ -192,10 +201,11 @@ class UserDAOTest {
     @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void assignCustomerToManager_ShouldAddRecord_WhenDataAreInserted() {
-        int customerId = 4;
-        int managerId = 10;
-
         boolean expected = true;
+
+        long customerId = 4;
+        long managerId = 10;
+
         boolean actual = userDAO.assignCustomerToManager(customerId, managerId);
 
         assertEquals(expected, actual);
@@ -208,11 +218,13 @@ class UserDAOTest {
     @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void unassignCustomerFromManager_ShouldDeleteNoRecords_WhenDeletedRecordNotExists() {
-        int customerId = 0;
-        int managerId = 0;
-
         boolean expected = false;
+
+        long customerId = 0;
+        long managerId = 0;
+
         boolean actual = userDAO.unassignCustomerFromManager(customerId, managerId);
+
         assertEquals(expected, actual);
     }
 
@@ -223,11 +235,13 @@ class UserDAOTest {
     @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void unassignCustomerFromManager_ShouldDeleteRecord_WhenDeletedRecordExists() {
-        int customerId = 1;
-        int managerId = 3;
-
         boolean expected = true;
+
+        long customerId = 1;
+        long managerId = 3;
+
         boolean actual = userDAO.unassignCustomerFromManager(customerId, managerId);
+
         assertEquals(expected, actual);
     }
 

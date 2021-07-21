@@ -3,28 +3,26 @@ package dev.andrylat.carsharing.models;
 import java.util.Objects;
 
 public class Car {
-    private static final int PRIME_ODD_NUMBER = 31;
-
-    private int id;
-    private int modelId;
+    private long id;
+    private long modelId;
     private int rentCostPerMin;
     private String registrationPlate;
     private String color;
     private String photo;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getModelId() {
+    public long getModelId() {
         return modelId;
     }
 
-    public void setModelId(int modelId) {
+    public void setModelId(long modelId) {
         this.modelId = modelId;
     }
 
@@ -84,12 +82,12 @@ public class Car {
     public int hashCode() {
         int result = 17;
 
-        result = PRIME_ODD_NUMBER * result + id;
-        result = PRIME_ODD_NUMBER * result + modelId;
-        result = PRIME_ODD_NUMBER * result + rentCostPerMin;
-        result = PRIME_ODD_NUMBER * result + (registrationPlate == null ? 0 : registrationPlate.hashCode());
-        result = PRIME_ODD_NUMBER * result + (color == null ? 0 : color.hashCode());
-        result = PRIME_ODD_NUMBER * result + (photo == null ? 0 : photo.hashCode());
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (modelId ^ (modelId >>> 32));
+        result = 31 * result + rentCostPerMin;
+        result = 31 * result + (registrationPlate == null ? 0 : registrationPlate.hashCode());
+        result = 31 * result + (color == null ? 0 : color.hashCode());
+        result = 31 * result + (photo == null ? 0 : photo.hashCode());
 
         return result;
     }

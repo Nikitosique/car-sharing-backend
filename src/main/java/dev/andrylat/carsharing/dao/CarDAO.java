@@ -4,6 +4,7 @@ import dev.andrylat.carsharing.dao.mappers.CarMapper;
 import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.Car;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 @Component
 public class CarDAO {
-    private static final String GET_ALL_CARS_SQL_QUERY = "SELECT * FROM cars";
+    private static final String GET_ALL_CARS_SQL_QUERY = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_CAR_BY_ID_SQL_QUERY = "SELECT * FROM cars WHERE id=?";
     private static final String DELETE_CAR_BY_ID_SQL_QUERY = "DELETE FROM cars WHERE id=?";
 
@@ -32,11 +33,13 @@ public class CarDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Car> getAll() {
-        return jdbcTemplate.query(GET_ALL_CARS_SQL_QUERY, new CarMapper());
+    public List<Car> getAll(int pageNumber, int pageSize) {
+        PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+
+        return jdbcTemplate.query(GET_ALL_CARS_SQL_QUERY, new CarMapper(), pageable.getPageSize(), pageable.getPageNumber());
     }
 
-    public Car getById(int id) {
+    public Car getById(long id) {
         return jdbcTemplate.queryForObject(GET_CAR_BY_ID_SQL_QUERY, new CarMapper(), id);
     }
 
@@ -46,7 +49,7 @@ public class CarDAO {
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement statement = connection.prepareStatement(ADD_CAR_SQL_QUERY, new String[]{"id"});
-                    statement.setInt(1, car.getModelId());
+                    statement.setLong(1, car.getModelId());
                     statement.setString(2, car.getRegistrationPlate());
                     statement.setInt(3, car.getRentCostPerMin());
                     statement.setString(4, car.getColor());
@@ -56,38 +59,31 @@ public class CarDAO {
                 keyHolder);
 
         Optional<Number> insertedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
-        int insertedRecordId = (int) insertedRecordIdOptional
+        long insertedRecordId = insertedRecordIdOptional.map(Number::longValue)
                 .orElseThrow(() -> new RecordNotFoundException("Data insertion has failed! Couldn't get inserted record!"));
 
         car.setId(insertedRecordId);
         return car;
     }
 
-    public Car updateById(Car updatedCar) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(
+    public boolean updateById(Car updatedCar) {
+        int updatedRowsNumber = jdbcTemplate.update(
                 connection -> {
-                    PreparedStatement statement = connection.prepareStatement(UPDATE_CAR_BY_ID_SQL_QUERY, new String[]{"id"});
-                    statement.setInt(1, updatedCar.getModelId());
+                    PreparedStatement statement = connection.prepareStatement(UPDATE_CAR_BY_ID_SQL_QUERY);
+                    statement.setLong(1, updatedCar.getModelId());
                     statement.setString(2, updatedCar.getRegistrationPlate());
                     statement.setInt(3, updatedCar.getRentCostPerMin());
                     statement.setString(4, updatedCar.getColor());
-                    statement.setString(5, updatedCar.getPhoto());
-                    statement.setInt(6, updatedCar.getId());
+                    statement.setString(5, updatedCar.getColor());
+                    statement.setLong(6, updatedCar.getId());
                     return statement;
-                },
-                keyHolder);
+                }
+        );
 
-        Optional<Number> updatedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
-        int updatedRecordId = (int) updatedRecordIdOptional
-                .orElseThrow(() -> new RecordNotFoundException("Data update has failed! Couldn't get updated record!"));
-
-        updatedCar.setId(updatedRecordId);
-        return updatedCar;
+        return updatedRowsNumber > 0;
     }
 
-    public boolean deleteById(int id) {
+    public boolean deleteById(long id) {
         int deletedRowsNumber = jdbcTemplate.update(DELETE_CAR_BY_ID_SQL_QUERY, id);
 
         return deletedRowsNumber > 0;

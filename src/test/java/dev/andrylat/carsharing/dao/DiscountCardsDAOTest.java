@@ -1,6 +1,5 @@
 package dev.andrylat.carsharing.dao;
 
-import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.DiscountCard;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +30,16 @@ class DiscountCardsDAOTest {
     @Sql({"classpath:initalscripts/dao/discountcard/DiscountCardDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
         List<DiscountCard> expected = new ArrayList<>();
-        List<DiscountCard> actual = discountCardDAO.getAll();
+
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<DiscountCard> actual = discountCardDAO.getAll(pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void getAll_ShouldReturnAllRecords_WhenTableIsNotEmpty() {
+    public void getAll_ShouldReturnFirstPageWithRecords_WhenTableIsNotEmpty() {
         List<DiscountCard> expected = new ArrayList<>();
 
         DiscountCard card = new DiscountCard();
@@ -51,13 +54,10 @@ class DiscountCardsDAOTest {
         card.setDiscountValue(4);
         expected.add(card);
 
-        card = new DiscountCard();
-        card.setId(3);
-        card.setCardNumber("467ea098bdec");
-        card.setDiscountValue(11);
-        expected.add(card);
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<DiscountCard> actual = discountCardDAO.getAll(pageNumber, pageSize);
 
-        List<DiscountCard> actual = discountCardDAO.getAll();
         assertEquals(expected, actual);
     }
 
@@ -76,6 +76,7 @@ class DiscountCardsDAOTest {
         expected.setDiscountValue(6);
 
         DiscountCard actual = discountCardDAO.getById(1);
+
         assertEquals(expected, actual);
     }
 
@@ -91,34 +92,35 @@ class DiscountCardsDAOTest {
         added.setDiscountValue(14);
 
         DiscountCard actual = discountCardDAO.add(added);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void updateById_ShouldThrownException_WhenUpdatedRecordNotExists() {
-        DiscountCard updated = new DiscountCard();
-        updated.setId(0);
-        updated.setCardNumber("d72d17f7609c");
-        updated.setDiscountValue(12);
+    public void updateById_ShouldNotUpdateRecord_WhenUpdatedRecordNotExists() {
+        boolean expected = false;
 
-        assertThrows(RecordNotFoundException.class, () -> {
-            discountCardDAO.updateById(updated);
-        });
+        DiscountCard updatedDiscountCard = new DiscountCard();
+        updatedDiscountCard.setId(0);
+        updatedDiscountCard.setCardNumber("d72d17f7609c");
+        updatedDiscountCard.setDiscountValue(12);
+
+        boolean actual = discountCardDAO.updateById(updatedDiscountCard);
+
+        assertEquals(expected, actual);
     }
 
     @Test
     public void updateById_ShouldUpdateRecord_WhenUpdatedRecordExists() {
-        DiscountCard expected = new DiscountCard();
-        expected.setId(1);
-        expected.setCardNumber("d72d17f7609c");
-        expected.setDiscountValue(12);
+        boolean expected = true;
 
-        DiscountCard updated = new DiscountCard();
-        updated.setId(1);
-        updated.setCardNumber("d72d17f7609c");
-        updated.setDiscountValue(12);
+        DiscountCard updatedDiscountCard = new DiscountCard();
+        updatedDiscountCard.setId(1);
+        updatedDiscountCard.setCardNumber("d72d17f7609c");
+        updatedDiscountCard.setDiscountValue(12);
 
-        DiscountCard actual = discountCardDAO.updateById(updated);
+        boolean actual = discountCardDAO.updateById(updatedDiscountCard);
+
         assertEquals(expected, actual);
     }
 

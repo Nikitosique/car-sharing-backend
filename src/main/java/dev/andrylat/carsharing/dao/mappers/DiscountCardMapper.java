@@ -12,7 +12,7 @@ public class DiscountCardMapper implements RowMapper<DiscountCard> {
     public DiscountCard mapRow(ResultSet resultSet, int i) throws SQLException {
         DiscountCard discountCard = new DiscountCard();
 
-        discountCard.setId(resultSet.getInt("id"));
+        discountCard.setId(resultSet.getLong("id"));
         discountCard.setDiscountValue(resultSet.getInt("discount_value"));
         discountCard.setCardNumber(resultSet.getString("card_number"));
 

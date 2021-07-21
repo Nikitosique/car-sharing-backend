@@ -3,27 +3,25 @@ package dev.andrylat.carsharing.models;
 import java.util.Objects;
 
 public class User {
-    private static final int PRIME_ODD_NUMBER = 31;
-
-    private int id;
-    private int discountCardId;
+    private long id;
+    private long discountCardId;
     private String email;
     private String password;
     private String type;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getDiscountCardId() {
+    public long getDiscountCardId() {
         return discountCardId;
     }
 
-    public void setDiscountCardId(int discountCardId) {
+    public void setDiscountCardId(long discountCardId) {
         this.discountCardId = discountCardId;
     }
 
@@ -74,11 +72,11 @@ public class User {
     public int hashCode() {
         int result = 17;
 
-        result = PRIME_ODD_NUMBER * result + id;
-        result = PRIME_ODD_NUMBER * result + discountCardId;
-        result = PRIME_ODD_NUMBER * result + (email == null ? 0 : email.hashCode());
-        result = PRIME_ODD_NUMBER * result + (password == null ? 0 : password.hashCode());
-        result = PRIME_ODD_NUMBER * result + (type == null ? 0 : type.hashCode());
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (discountCardId ^ (discountCardId >>> 32));
+        result = 31 * result + (email == null ? 0 : email.hashCode());
+        result = 31 * result + (password == null ? 0 : password.hashCode());
+        result = 31 * result + (type == null ? 0 : type.hashCode());
 
         return result;
     }

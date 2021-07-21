@@ -4,6 +4,7 @@ import dev.andrylat.carsharing.dao.mappers.DiscountCardMapper;
 import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.DiscountCard;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 @Component
 public class DiscountCardDAO {
-    private static final String GET_ALL_DISCOUNT_CARDS_SQL_QUERY = "SELECT * FROM discount_cards";
+    private static final String GET_ALL_DISCOUNT_CARDS_SQL_QUERY = "SELECT * FROM discount_cards ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_DISCOUNT_CARD_BY_ID_SQL_QUERY = "SELECT * FROM discount_cards WHERE id=?";
     private static final String DELETE_DISCOUNT_CARD_BY_ID_SQL_QUERY = "DELETE FROM discount_cards WHERE id=?";
 
@@ -32,11 +33,13 @@ public class DiscountCardDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<DiscountCard> getAll() {
-        return jdbcTemplate.query(GET_ALL_DISCOUNT_CARDS_SQL_QUERY, new DiscountCardMapper());
+    public List<DiscountCard> getAll(int pageNumber, int pageSize) {
+        PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+
+        return jdbcTemplate.query(GET_ALL_DISCOUNT_CARDS_SQL_QUERY, new DiscountCardMapper(), pageable.getPageSize(), pageable.getPageNumber());
     }
 
-    public DiscountCard getById(int id) {
+    public DiscountCard getById(long id) {
         return jdbcTemplate.queryForObject(GET_DISCOUNT_CARD_BY_ID_SQL_QUERY, new DiscountCardMapper(), id);
     }
 
@@ -53,35 +56,21 @@ public class DiscountCardDAO {
                 keyHolder);
 
         Optional<Number> insertedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
-        int insertedRecordId = (int) insertedRecordIdOptional
+        long insertedRecordId = insertedRecordIdOptional.map(Number::longValue)
                 .orElseThrow(() -> new RecordNotFoundException("Data insertion has failed! Couldn't get inserted record!"));
 
         card.setId(insertedRecordId);
         return card;
     }
 
-    public DiscountCard updateById(DiscountCard updatedDiscountCard) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+    public boolean updateById(DiscountCard updatedDiscountCard) {
+        int updatedRowsNumber = jdbcTemplate.update(UPDATE_DISCOUNT_CARD_BY_ID_SQL_QUERY, updatedDiscountCard.getCardNumber(),
+                updatedDiscountCard.getDiscountValue(), updatedDiscountCard.getId());
 
-        jdbcTemplate.update(
-                connection -> {
-                    PreparedStatement statement = connection.prepareStatement(UPDATE_DISCOUNT_CARD_BY_ID_SQL_QUERY, new String[]{"id"});
-                    statement.setString(1, updatedDiscountCard.getCardNumber());
-                    statement.setInt(2, updatedDiscountCard.getDiscountValue());
-                    statement.setInt(3, updatedDiscountCard.getId());
-                    return statement;
-                },
-                keyHolder);
-
-        Optional<Number> updatedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
-        int updatedRecordId = (int) updatedRecordIdOptional
-                .orElseThrow(() -> new RecordNotFoundException("Data update has failed! Couldn't get updated record!"));
-
-        updatedDiscountCard.setId(updatedRecordId);
-        return updatedDiscountCard;
+        return updatedRowsNumber > 0;
     }
 
-    public boolean deleteById(int id) {
+    public boolean deleteById(long id) {
         int deletedRowsNumber = jdbcTemplate.update(DELETE_DISCOUNT_CARD_BY_ID_SQL_QUERY, id);
 
         return deletedRowsNumber > 0;

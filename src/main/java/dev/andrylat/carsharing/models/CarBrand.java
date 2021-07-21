@@ -3,24 +3,22 @@ package dev.andrylat.carsharing.models;
 import java.util.Objects;
 
 public class CarBrand {
-    private static final int PRIME_ODD_NUMBER = 31;
-
-    private int id;
+    private long id;
     private String name;
 
     public CarBrand() {
     }
 
-    public CarBrand(int id, String name) {
+    public CarBrand(long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -52,8 +50,8 @@ public class CarBrand {
     public int hashCode() {
 
         int result = 17;
-        result = PRIME_ODD_NUMBER * result + id;
-        result = PRIME_ODD_NUMBER * result + (name == null ? 0 : name.hashCode());
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + (name == null ? 0 : name.hashCode());
 
         return result;
     }

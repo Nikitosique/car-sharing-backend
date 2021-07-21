@@ -5,11 +5,11 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CustomerManagerMapper implements RowMapper<Integer> {
+public class CustomerManagerMapper implements RowMapper<Long> {
 
     @Override
-    public Integer mapRow(ResultSet resultSet, int i) throws SQLException {
-        return resultSet.getInt("customer_id");
+    public Long mapRow(ResultSet resultSet, int i) throws SQLException {
+        return resultSet.getLong("customer_id");
     }
 
 }
