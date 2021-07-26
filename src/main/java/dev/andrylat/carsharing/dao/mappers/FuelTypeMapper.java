@@ -12,7 +12,7 @@ public class FuelTypeMapper implements RowMapper<FuelType> {
     public FuelType mapRow(ResultSet resultSet, int i) throws SQLException {
         FuelType fuelType = new FuelType();
 
-        fuelType.setId(resultSet.getInt("id"));
+        fuelType.setId(resultSet.getLong("id"));
         fuelType.setName(resultSet.getString("name"));
 
         return fuelType;

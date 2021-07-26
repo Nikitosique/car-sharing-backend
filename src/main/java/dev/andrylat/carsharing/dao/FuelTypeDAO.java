@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Component
 public class FuelTypeDAO {
-    private static final String GET_ALL_FUEL_TYPES_SQL_QUERY = "SELECT * FROM fuel_types";
+    private static final String GET_ALL_FUEL_TYPES_SQL_QUERY = "SELECT * FROM fuel_types ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_FUEL_TYPE_BY_ID_SQL_QUERY = "SELECT * FROM fuel_types WHERE id=?";
     private static final String ADD_FUEL_TYPE_SQL_QUERY = "INSERT INTO fuel_types(name) VALUES(?)";
     private static final String UPDATE_FUEL_TYPE_BY_ID_SQL_QUERY = "UPDATE fuel_types SET name=? WHERE id=?";
@@ -28,11 +28,13 @@ public class FuelTypeDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<FuelType> getAll() {
-        return jdbcTemplate.query(GET_ALL_FUEL_TYPES_SQL_QUERY, new FuelTypeMapper());
+    public List<FuelType> getAll(int pageNumber, int pageSize) {
+        int omittedRecordsNumber = pageNumber * pageSize;
+
+        return jdbcTemplate.query(GET_ALL_FUEL_TYPES_SQL_QUERY, new FuelTypeMapper(), pageSize, omittedRecordsNumber);
     }
 
-    public FuelType getById(int id) {
+    public FuelType getById(long id) {
         return jdbcTemplate.queryForObject(GET_FUEL_TYPE_BY_ID_SQL_QUERY, new FuelTypeMapper(), id);
     }
 
@@ -49,35 +51,20 @@ public class FuelTypeDAO {
                 keyHolder);
 
         Optional<Number> insertedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
-        int insertedRecordId = (int) insertedRecordIdOptional
+        long insertedRecordId = insertedRecordIdOptional.map(Number::longValue)
                 .orElseThrow(() -> new RecordNotFoundException("Data insertion has failed! Couldn't get inserted record!"));
 
         fuelType.setId(insertedRecordId);
         return fuelType;
     }
 
-    public FuelType updateById(FuelType updatedFuelType) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+    public boolean updateById(FuelType updatedFuelType) {
+        int updatedRowsNumber = jdbcTemplate.update(UPDATE_FUEL_TYPE_BY_ID_SQL_QUERY, updatedFuelType.getName(), updatedFuelType.getId());
 
-        jdbcTemplate.update(
-                connection -> {
-                    PreparedStatement statement =
-                            connection.prepareStatement(UPDATE_FUEL_TYPE_BY_ID_SQL_QUERY, new String[]{"id"});
-                    statement.setString(1, updatedFuelType.getName());
-                    statement.setInt(2, updatedFuelType.getId());
-                    return statement;
-                },
-                keyHolder);
-
-        Optional<Number> updatedRecordIdOptional = Optional.ofNullable(keyHolder.getKey());
-        int updatedRecordId = (int) updatedRecordIdOptional
-                .orElseThrow(() -> new RecordNotFoundException("Data update has failed! Couldn't get updated record!"));
-
-        updatedFuelType.setId(updatedRecordId);
-        return updatedFuelType;
+        return updatedRowsNumber > 0;
     }
 
-    public boolean deleteById(int id) {
+    public boolean deleteById(long id) {
         int deletedRowsNumber = jdbcTemplate.update(DELETE_FUEL_TYPE_BY_ID_SQL_QUERY, id);
 
         return deletedRowsNumber > 0;

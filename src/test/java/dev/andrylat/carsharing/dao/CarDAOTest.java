@@ -1,6 +1,5 @@
 package dev.andrylat.carsharing.dao;
 
-import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.Car;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +30,16 @@ class CarDAOTest {
     @Sql({"classpath:initalscripts/dao/car/CarDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
         List<Car> expected = new ArrayList<>();
-        List<Car> actual = carDAO.getAll();
+
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<Car> actual = carDAO.getAll(pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void getAll_ShouldReturnAllRecords_WhenTableIsNotEmpty() {
+    public void getAll_ShouldReturnFirstPageWithRecords_WhenTableIsNotEmpty() {
         List<Car> expected = new ArrayList<>();
 
         Car car = new Car();
@@ -57,16 +60,10 @@ class CarDAOTest {
         car.setPhoto("car_2.png");
         expected.add(car);
 
-        car = new Car();
-        car.setId(3);
-        car.setModelId(18);
-        car.setRegistrationPlate("VS399EK");
-        car.setRentCostPerMin(7);
-        car.setColor("black");
-        car.setPhoto("car_3.png");
-        expected.add(car);
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<Car> actual = carDAO.getAll(pageNumber, pageSize);
 
-        List<Car> actual = carDAO.getAll();
         assertEquals(expected, actual);
     }
 
@@ -88,6 +85,7 @@ class CarDAOTest {
         expected.setPhoto("car_1.png");
 
         Car actual = carDAO.getById(1);
+
         assertEquals(expected, actual);
     }
 
@@ -109,43 +107,41 @@ class CarDAOTest {
         added.setPhoto("car_4.png");
 
         Car actual = carDAO.add(added);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void updateById_ShouldThrownException_WhenUpdatedRecordNotExists() {
-        Car updated = new Car();
-        updated.setId(0);
-        updated.setModelId(1);
-        updated.setRegistrationPlate("QQ1111QQ");
-        updated.setRentCostPerMin(1);
-        updated.setColor("black");
-        updated.setPhoto("car_0.png");
+    public void updateById_ShouldNotUpdateRecord_WhenUpdatedRecordNotExists() {
+        boolean expected = false;
 
-        assertThrows(RecordNotFoundException.class, () -> {
-            carDAO.updateById(updated);
-        });
+        Car updatedCar = new Car();
+        updatedCar.setId(0);
+        updatedCar.setModelId(1);
+        updatedCar.setRegistrationPlate("QQ1111QQ");
+        updatedCar.setRentCostPerMin(1);
+        updatedCar.setColor("black");
+        updatedCar.setPhoto("car_0.png");
+
+        boolean actual = carDAO.updateById(updatedCar);
+
+        assertEquals(expected, actual);
     }
 
     @Test
     public void updateById_ShouldUpdateRecord_WhenUpdatedRecordExists() {
-        Car expected = new Car();
-        expected.setId(1);
-        expected.setModelId(2);
-        expected.setRegistrationPlate("LR3451CO");
-        expected.setRentCostPerMin(16);
-        expected.setColor("white");
-        expected.setPhoto("car_4.png");
+        boolean expected = true;
 
-        Car updated = new Car();
-        updated.setId(1);
-        updated.setModelId(2);
-        updated.setRegistrationPlate("LR3451CO");
-        updated.setRentCostPerMin(16);
-        updated.setColor("white");
-        updated.setPhoto("car_4.png");
+        Car updatedCar = new Car();
+        updatedCar.setId(1);
+        updatedCar.setModelId(2);
+        updatedCar.setRegistrationPlate("LR3451CO");
+        updatedCar.setRentCostPerMin(16);
+        updatedCar.setColor("white");
+        updatedCar.setPhoto("car_4.png");
 
-        Car actual = carDAO.updateById(updated);
+        boolean actual = carDAO.updateById(updatedCar);
+
         assertEquals(expected, actual);
     }
 

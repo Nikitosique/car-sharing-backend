@@ -12,9 +12,9 @@ public class RentSessionMapper implements RowMapper<RentSession> {
     public RentSession mapRow(ResultSet resultSet, int i) throws SQLException {
         RentSession rentSession = new RentSession();
 
-        rentSession.setId(resultSet.getInt("id"));
-        rentSession.setCustomerId(resultSet.getInt("customer_id"));
-        rentSession.setCarId(resultSet.getInt("car_id"));
+        rentSession.setId(resultSet.getLong("id"));
+        rentSession.setCustomerId(resultSet.getLong("customer_id"));
+        rentSession.setCarId(resultSet.getLong("car_id"));
         rentSession.setRentSessionCost(resultSet.getInt("rent_session_cost"));
         rentSession.setRentTimeInterval((PGInterval) resultSet.getObject("rent_time_interval"));
 

@@ -3,17 +3,15 @@ package dev.andrylat.carsharing.models;
 import java.util.Objects;
 
 public class DiscountCard {
-    private static final int PRIME_ODD_NUMBER = 31;
-
-    private int id;
+    private long id;
     private int discountValue;
     private String cardNumber;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -54,9 +52,9 @@ public class DiscountCard {
     public int hashCode() {
         int result = 17;
 
-        result = PRIME_ODD_NUMBER * result + id;
-        result = PRIME_ODD_NUMBER * result + discountValue;
-        result = PRIME_ODD_NUMBER * result + (cardNumber == null ? 0 : cardNumber.hashCode());
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + discountValue;
+        result = 31 * result + (cardNumber == null ? 0 : cardNumber.hashCode());
 
         return result;
     }

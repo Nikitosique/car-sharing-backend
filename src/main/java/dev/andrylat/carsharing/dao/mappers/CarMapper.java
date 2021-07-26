@@ -12,8 +12,8 @@ public class CarMapper implements RowMapper<Car> {
     public Car mapRow(ResultSet resultSet, int i) throws SQLException {
         Car car = new Car();
 
-        car.setId(resultSet.getInt("id"));
-        car.setModelId(resultSet.getInt("model_id"));
+        car.setId(resultSet.getLong("id"));
+        car.setModelId(resultSet.getLong("model_id"));
         car.setRentCostPerMin(resultSet.getInt("rent_cost_per_min"));
         car.setRegistrationPlate(resultSet.getString("reg_plate"));
         car.setColor(resultSet.getString("color"));

@@ -1,6 +1,5 @@
 package dev.andrylat.carsharing.dao;
 
-import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.FuelType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +30,24 @@ class FuelTypeDAOTest {
     @Sql({"classpath:initalscripts/dao/fueltype/FuelTypeDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
         List<FuelType> expected = new ArrayList<>();
-        List<FuelType> actual = fuelTypeDAO.getAll();
+
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<FuelType> actual = fuelTypeDAO.getAll(pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void getAll_ShouldReturnAllRecords_WhenTableIsNotEmpty() {
+    public void getAll_ShouldReturnFirstPageWithRecords_WhenTableIsNotEmpty() {
         List<FuelType> expected = new ArrayList<>(List.of(
                 new FuelType(1, "gasoline"),
-                new FuelType(2, "natural gas"),
-                new FuelType(3, "diesel")));
+                new FuelType(2, "natural gas")));
 
-        List<FuelType> actual = fuelTypeDAO.getAll();
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<FuelType> actual = fuelTypeDAO.getAll(pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
@@ -68,19 +73,22 @@ class FuelTypeDAOTest {
     }
 
     @Test
-    public void updateById_ShouldThrownException_WhenUpdatedRecordNotExists() {
-        FuelType updatedFuelType = new FuelType(0, "New Type");
+    public void updateById_ShouldNotUpdateRecord_WhenUpdatedRecordNotExists() {
+        boolean expected = false;
 
-        assertThrows(RecordNotFoundException.class, () -> {
-            fuelTypeDAO.updateById(updatedFuelType);
-        });
+        FuelType updatedFuelType = new FuelType(0, "New Type");
+        boolean actual = fuelTypeDAO.updateById(updatedFuelType);
+
+        assertEquals(expected, actual);
     }
 
     @Test
     public void updateById_ShouldUpdateRecord_WhenUpdatedRecordExists() {
-        FuelType expected = new FuelType(1, "New Type");
+        boolean expected = true;
+
         FuelType updatedFuelType = new FuelType(1, "New Type");
-        FuelType actual = fuelTypeDAO.updateById(updatedFuelType);
+        boolean actual = fuelTypeDAO.updateById(updatedFuelType);
+
         assertEquals(expected, actual);
     }
 

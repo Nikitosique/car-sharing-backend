@@ -1,6 +1,5 @@
 package dev.andrylat.carsharing.dao;
 
-import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.CarBrand;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +30,24 @@ class CarBrandDAOTest {
     @Sql({"classpath:initalscripts/dao/carbrand/CarBrandDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
         List<CarBrand> expected = new ArrayList<>();
-        List<CarBrand> actual = carBrandDAO.getAll();
+
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<CarBrand> actual = carBrandDAO.getAll(pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void getAll_ShouldReturnAllRecords_WhenTableIsNotEmpty() {
+    public void getAll_ShouldReturnFirstPageWithRecords_WhenTableIsNotEmpty() {
         List<CarBrand> expected = new ArrayList<>(List.of(
                 new CarBrand(1, "nissan"),
-                new CarBrand(2, "audi"),
-                new CarBrand(3, "skoda")));
+                new CarBrand(2, "audi")));
 
-        List<CarBrand> actual = carBrandDAO.getAll();
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<CarBrand> actual = carBrandDAO.getAll(pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
@@ -68,19 +73,22 @@ class CarBrandDAOTest {
     }
 
     @Test
-    public void updateById_ShouldThrownException_WhenUpdatedRecordNotExists() {
-        CarBrand updatedCarBrand = new CarBrand(0, "New Type");
+    public void updateById_ShouldNotUpdateRecord_WhenUpdatedRecordNotExists() {
+        boolean expected = false;
 
-        assertThrows(RecordNotFoundException.class, () -> {
-            carBrandDAO.updateById(updatedCarBrand);
-        });
+        CarBrand updatedCarBrand = new CarBrand(0, "New Type");
+        boolean actual = carBrandDAO.updateById(updatedCarBrand);
+
+        assertEquals(expected, actual);
     }
 
     @Test
     public void updateById_ShouldUpdateRecord_WhenUpdatedRecordExists() {
-        CarBrand expected = new CarBrand(1, "New Type");
+        boolean expected = true;
+
         CarBrand updatedCarBrand = new CarBrand(1, "New Type");
-        CarBrand actual = carBrandDAO.updateById(updatedCarBrand);
+        boolean actual = carBrandDAO.updateById(updatedCarBrand);
+
         assertEquals(expected, actual);
     }
 

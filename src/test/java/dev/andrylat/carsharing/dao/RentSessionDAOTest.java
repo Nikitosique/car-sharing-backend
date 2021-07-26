@@ -1,6 +1,5 @@
 package dev.andrylat.carsharing.dao;
 
-import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.RentSession;
 import org.junit.jupiter.api.Test;
 import org.postgresql.util.PGInterval;
@@ -32,14 +31,17 @@ class RentSessionDAOTest {
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql({"classpath:initalscripts/dao/rentsession/RentSessionDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
-
         List<RentSession> expected = new ArrayList<>();
-        List<RentSession> actual = rentSessionDAO.getAll();
+
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<RentSession> actual = rentSessionDAO.getAll(pageNumber, pageSize);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void getAll_ShouldReturnAllRecords_WhenTableIsNotEmpty() throws SQLException {
+    public void getAll_ShouldReturnFirstPageWithRecords_WhenTableIsNotEmpty() throws SQLException {
         List<RentSession> expected = new ArrayList<>();
 
         RentSession rentSession = new RentSession();
@@ -58,15 +60,10 @@ class RentSessionDAOTest {
         rentSession.setRentSessionCost(1500);
         expected.add(rentSession);
 
-        rentSession = new RentSession();
-        rentSession.setId(3);
-        rentSession.setCustomerId(3);
-        rentSession.setCarId(32);
-        rentSession.setRentTimeInterval(new PGInterval("45 minutes 21 second"));
-        rentSession.setRentSessionCost(100);
-        expected.add(rentSession);
+        int pageNumber = 0;
+        int pageSize = 2;
+        List<RentSession> actual = rentSessionDAO.getAll(pageNumber, pageSize);
 
-        List<RentSession> actual = rentSessionDAO.getAll();
         assertEquals(expected, actual);
     }
 
@@ -88,6 +85,7 @@ class RentSessionDAOTest {
         expected.setRentSessionCost(100000);
 
         RentSession actual = rentSessionDAO.getById(1);
+
         assertEquals(expected, actual);
     }
 
@@ -107,40 +105,40 @@ class RentSessionDAOTest {
         added.setRentSessionCost(100000);
 
         RentSession actual = rentSessionDAO.add(added);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    public void updateById_ShouldThrownException_WhenUpdatedRecordNotExists() throws SQLException {
-        RentSession updated = new RentSession();
-        updated.setId(0);
-        updated.setCustomerId(10);
-        updated.setCarId(20);
-        updated.setRentTimeInterval(new PGInterval("1 day 2 hour"));
-        updated.setRentSessionCost(2000);
+    public void updateById_ShouldNotUpdateRecord_WhenUpdatedRecordNotExists() throws SQLException {
+        boolean expected = false;
 
-        assertThrows(RecordNotFoundException.class, () -> {
-            rentSessionDAO.updateById(updated);
-        });
+        RentSession updatedRentSession = new RentSession();
+        updatedRentSession.setId(0);
+        updatedRentSession.setCustomerId(10);
+        updatedRentSession.setCarId(20);
+        updatedRentSession.setRentTimeInterval(new PGInterval("1 day 2 hour"));
+        updatedRentSession.setRentSessionCost(2000);
+
+        boolean actual = rentSessionDAO.updateById(updatedRentSession);
+
+        assertEquals(expected, actual);
+
     }
 
     @Test
     public void updateById_ShouldUpdateRecord_WhenUpdatedRecordExists() throws SQLException {
-        RentSession expected = new RentSession();
-        expected.setId(1);
-        expected.setCustomerId(10);
-        expected.setCarId(20);
-        expected.setRentTimeInterval(new PGInterval("1 day 2 hour"));
-        expected.setRentSessionCost(2000);
+        boolean expected = true;
 
-        RentSession updated = new RentSession();
-        updated.setId(1);
-        updated.setCustomerId(10);
-        updated.setCarId(20);
-        updated.setRentTimeInterval(new PGInterval("1 day 2 hour"));
-        updated.setRentSessionCost(2000);
+        RentSession updatedRentSession = new RentSession();
+        updatedRentSession.setId(1);
+        updatedRentSession.setCustomerId(10);
+        updatedRentSession.setCarId(20);
+        updatedRentSession.setRentTimeInterval(new PGInterval("1 day 2 hour"));
+        updatedRentSession.setRentSessionCost(2000);
 
-        RentSession actual = rentSessionDAO.updateById(updated);
+        boolean actual = rentSessionDAO.updateById(updatedRentSession);
+
         assertEquals(expected, actual);
     }
 

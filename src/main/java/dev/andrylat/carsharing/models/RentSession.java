@@ -3,35 +3,33 @@ package dev.andrylat.carsharing.models;
 import org.postgresql.util.PGInterval;
 
 public class RentSession {
-    private static final int PRIME_ODD_NUMBER = 31;
-
-    private int id;
-    private int customerId;
-    private int carId;
+    private long id;
+    private long customerId;
+    private long carId;
     private int rentSessionCost;
     private PGInterval rentTimeInterval;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getCustomerId() {
+    public long getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(long customerId) {
         this.customerId = customerId;
     }
 
-    public int getCarId() {
+    public long getCarId() {
         return carId;
     }
 
-    public void setCarId(int carId) {
+    public void setCarId(long carId) {
         this.carId = carId;
     }
 
@@ -74,11 +72,11 @@ public class RentSession {
     public int hashCode() {
         int result = 17;
 
-        result = PRIME_ODD_NUMBER * result + id;
-        result = PRIME_ODD_NUMBER * result + customerId;
-        result = PRIME_ODD_NUMBER * result + carId;
-        result = PRIME_ODD_NUMBER * result + rentSessionCost;
-        result = PRIME_ODD_NUMBER * result + (rentTimeInterval == null ? 0 : rentTimeInterval.hashCode());
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (customerId ^ (customerId >>> 32));
+        result = 31 * result + (int) (carId ^ (carId >>> 32));
+        result = 31 * result + rentSessionCost;
+        result = 31 * result + (rentTimeInterval == null ? 0 : rentTimeInterval.hashCode());
 
         return result;
     }
