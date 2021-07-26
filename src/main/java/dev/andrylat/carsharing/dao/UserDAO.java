@@ -5,7 +5,6 @@ import dev.andrylat.carsharing.dao.mappers.UserMapper;
 import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -39,9 +38,9 @@ public class UserDAO {
     }
 
     public List<User> getAll(int pageNumber, int pageSize) {
-        PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+        int omittedRecordsNumber = pageNumber * pageSize;
 
-        return jdbcTemplate.query(GET_ALL_USERS_SQL_QUERY, new UserMapper(), pageable.getPageSize(), pageable.getPageNumber());
+        return jdbcTemplate.query(GET_ALL_USERS_SQL_QUERY, new UserMapper(), pageSize, omittedRecordsNumber);
     }
 
     public User getById(long id) {
@@ -93,10 +92,10 @@ public class UserDAO {
     }
 
     public List<Long> getCustomersIdByManagerId(long managerId, int pageNumber, int pageSize) {
-        PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+        int omittedRecordsNumber = pageNumber * pageSize;
 
         return jdbcTemplate.query(GET_CUSTOMERS_BY_MANAGER_ID_SQL_QUERY, new CustomerManagerMapper(), managerId,
-                pageable.getPageSize(), pageable.getPageNumber());
+                pageSize, omittedRecordsNumber);
     }
 
     public boolean assignCustomerToManager(long customerId, long managerId) {

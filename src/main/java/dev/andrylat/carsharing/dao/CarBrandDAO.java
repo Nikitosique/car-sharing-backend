@@ -4,7 +4,6 @@ import dev.andrylat.carsharing.dao.mappers.CarBrandMapper;
 import dev.andrylat.carsharing.exceptions.RecordNotFoundException;
 import dev.andrylat.carsharing.models.CarBrand;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -30,9 +29,9 @@ public class CarBrandDAO {
     }
 
     public List<CarBrand> getAll(int pageNumber, int pageSize) {
-        PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+        int omittedRecordsNumber = pageNumber * pageSize;
 
-        return jdbcTemplate.query(GET_ALL_CAR_BRANDS_SQL_QUERY, new CarBrandMapper(), pageable.getPageSize(), pageable.getPageNumber());
+        return jdbcTemplate.query(GET_ALL_CAR_BRANDS_SQL_QUERY, new CarBrandMapper(), pageSize, omittedRecordsNumber);
     }
 
     public CarBrand getById(long id) {
