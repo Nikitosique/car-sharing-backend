@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Component
 public class BodyTypeDAO {
+    private static final String GET_BODY_TYPES_NUMBER_SQL_QUERY = "SELECT COUNT(*) FROM body_types";
     private static final String GET_ALL_BODY_TYPES_SQL_QUERY = "SELECT * from body_types ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_BODY_TYPE_BY_ID_SQL_QUERY = "SELECT * FROM body_types WHERE id=?";
     private static final String ADD_BODY_TYPE_SQL_QUERY = "INSERT INTO body_types(name) VALUES(?)";
@@ -26,6 +27,10 @@ public class BodyTypeDAO {
     @Autowired
     public BodyTypeDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public long getRecordsNumber() {
+        return jdbcTemplate.queryForObject(GET_BODY_TYPES_NUMBER_SQL_QUERY, Long.class);
     }
 
     public List<BodyType> getAll(int pageNumber, int pageSize) {
