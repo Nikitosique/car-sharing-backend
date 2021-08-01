@@ -1,7 +1,7 @@
 package dev.andrylat.carsharing.controllers;
 
-import dev.andrylat.carsharing.dao.BodyTypeDAO;
 import dev.andrylat.carsharing.models.BodyType;
+import dev.andrylat.carsharing.services.implementations.BodyTypeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,8 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class BodyTypesControllerTest {
+
     @Mock
-    private BodyTypeDAO bodyTypeDAO;
+    private BodyTypeServiceImpl bodyTypeServiceImpl;
 
     @InjectMocks
     private BodyTypesController bodyTypesController;
@@ -41,10 +42,14 @@ class BodyTypesControllerTest {
     @Captor
     private ArgumentCaptor<Integer> pageSizeCaptor;
 
+    @Captor
+    private ArgumentCaptor<Long> idCaptor;
+
     private MockMvc mockMvc;
     private long recordsNumber;
     private int bodyTypesListSize;
     private int pageNumber;
+    private BodyType bodyType;
     private List<BodyType> bodyTypes;
 
     @BeforeEach
@@ -56,6 +61,7 @@ class BodyTypesControllerTest {
         recordsNumber = 2;
         bodyTypesListSize = bodyTypes.size();
         pageNumber = 0;
+        bodyType = bodyTypes.get(0);
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(bodyTypesController)
@@ -67,25 +73,25 @@ class BodyTypesControllerTest {
         mockMvc.perform(get("/invalidUrl"))
                 .andExpect(status().isNotFound());
 
-        verify(bodyTypeDAO, never()).getAll(anyInt(), anyInt());
+        verify(bodyTypeServiceImpl, never()).getAll(anyInt(), anyInt());
     }
 
     @Test
     public void getAll_ShouldThrownException_WhenQueryParametersAreInvalid() {
-        when(bodyTypeDAO.getAll(anyInt(), anyInt())).thenThrow(MockitoException.class);
+        when(bodyTypeServiceImpl.getAll(anyInt(), anyInt())).thenThrow(MockitoException.class);
 
         assertThrows(NestedServletException.class,
                 () -> mockMvc.perform(get("/bodytypes?pageNumber=-1&pageSize=-1")));
 
-        verify(bodyTypeDAO).getAll(anyInt(), anyInt());
+        verify(bodyTypeServiceImpl).getAll(anyInt(), anyInt());
     }
 
     @Test
-    public void getAll_ShouldReturnBodyTypes_WhenQueryParametersAreAbsent() throws Exception {
+    public void getAll_ShouldReturnRecords_WhenQueryParametersAreAbsent() throws Exception {
         int pageSize = 10;
 
-        when(bodyTypeDAO.getAll(anyInt(), anyInt())).thenReturn(bodyTypes);
-        when(bodyTypeDAO.getRecordsNumber()).thenReturn(recordsNumber);
+        when(bodyTypeServiceImpl.getAll(anyInt(), anyInt())).thenReturn(bodyTypes);
+        when(bodyTypeServiceImpl.getRecordsNumber()).thenReturn(recordsNumber);
 
         mockMvc.perform(get("/bodytypes"))
                 .andExpect(status().isOk())
@@ -95,20 +101,20 @@ class BodyTypesControllerTest {
                 .andExpect(model().attribute("pageNumber", pageNumber))
                 .andExpect(model().attribute("pageSize", pageSize));
 
-        verify(bodyTypeDAO).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
+        verify(bodyTypeServiceImpl).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
 
         assertThat(pageNumberCaptor.getValue(), is(pageNumber));
         assertThat(pageSizeCaptor.getValue(), is(pageSize));
 
-        verify(bodyTypeDAO).getRecordsNumber();
+        verify(bodyTypeServiceImpl).getRecordsNumber();
     }
 
     @Test
-    public void getAll_ShouldReturnBodyTypes_WhenQueryParametersArePresent() throws Exception {
+    public void getAll_ShouldReturnRecords_WhenQueryParametersArePresent() throws Exception {
         int pageSize = 5;
 
-        when(bodyTypeDAO.getAll(anyInt(), anyInt())).thenReturn(bodyTypes);
-        when(bodyTypeDAO.getRecordsNumber()).thenReturn(recordsNumber);
+        when(bodyTypeServiceImpl.getAll(anyInt(), anyInt())).thenReturn(bodyTypes);
+        when(bodyTypeServiceImpl.getRecordsNumber()).thenReturn(recordsNumber);
 
         mockMvc.perform(get("/bodytypes?pageNumber=0&pageSize=5"))
                 .andExpect(status().isOk())
@@ -118,12 +124,38 @@ class BodyTypesControllerTest {
                 .andExpect(model().attribute("pageNumber", pageNumber))
                 .andExpect(model().attribute("pageSize", pageSize));
 
-        verify(bodyTypeDAO).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
+        verify(bodyTypeServiceImpl).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
 
         assertThat(pageNumberCaptor.getValue(), is(pageNumber));
         assertThat(pageSizeCaptor.getValue(), is(pageSize));
 
-        verify(bodyTypeDAO).getRecordsNumber();
+        verify(bodyTypeServiceImpl).getRecordsNumber();
+    }
+
+    @Test
+    public void getById_ShouldThrowException_WhenPathParameterIsInvalid() {
+        when(bodyTypeServiceImpl.getById(anyLong())).thenThrow(MockitoException.class);
+
+        assertThrows(NestedServletException.class,
+                () -> mockMvc.perform(get("/bodytypes/-1")));
+
+        verify(bodyTypeServiceImpl).getById(anyLong());
+    }
+
+    @Test
+    public void getById_ShouldReturnRecord_WhenPathParameterIsValid() throws Exception {
+        BodyType expected = new BodyType(1, "sedan");
+
+        when(bodyTypeServiceImpl.getById(anyLong())).thenReturn(bodyType);
+
+        mockMvc.perform(get("/bodytypes/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("bodytypes/getById"))
+                .andExpect(model().attribute("bodyType", expected));
+
+        verify(bodyTypeServiceImpl).getById(idCaptor.capture());
+
+        assertThat(idCaptor.getValue(), is(1L));
     }
 
 }
