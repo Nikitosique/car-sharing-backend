@@ -1,9 +1,15 @@
 package dev.andrylat.carsharing.models;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class BodyType {
+    @NotNull
+    @Min(1)
     private long id;
+
+    @NotNull
     private String name;
 
     public BodyType() {
