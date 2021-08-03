@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Car</title>
+</head>
+
+<body>
+<p th:text="${'ID: ' + car.getId}">ID</p>
+<p th:text="${'Model Id: ' + car.getModelId}">Model Id</p>
+<p th:text="${'Rent cost per minute: ' + car.getRentCostPerMin}">Rent cost per minute</p>
+<p th:text="${'Registration plate: ' + car.getRegistrationPlate}">Registration plate</p>
+<p th:text="${'Color: ' + car.getColor}">Color</p>
+<p th:text="${'Photo: ' + car.getPhoto}">Photo</p>
+
+</body>
+</html>

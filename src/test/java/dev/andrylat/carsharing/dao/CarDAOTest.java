@@ -28,6 +28,22 @@ class CarDAOTest {
     @Test
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql({"classpath:initalscripts/dao/car/CarDataDeletion.sql"})
+    public void getRecordsNumber_ShouldReturnZero_WhenTableIsEmpty() {
+        long expected = 0;
+        long actual = carDAO.getRecordsNumber();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getRecordsNumber_ShouldReturnRecordsNumber_WhenTableIsNotEmpty() {
+        long expected = 3;
+        long actual = carDAO.getRecordsNumber();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    @Sql({"classpath:initalscripts/dao/car/CarDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
         List<Car> expected = new ArrayList<>();
 

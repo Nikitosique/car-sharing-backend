@@ -26,7 +26,7 @@ class BodyTypeServiceImplTest {
     private BodyTypeDAO bodyTypeDAO;
 
     @InjectMocks
-    private BodyTypeServiceImpl bodyTypeService;
+    private BodyTypeServiceImpl bodyTypeServiceImpl;
 
     private BodyType bodyType;
     private List<BodyType> bodyTypes;
@@ -46,7 +46,7 @@ class BodyTypeServiceImplTest {
 
         when(bodyTypeDAO.getRecordsNumber()).thenReturn(0L);
 
-        long actual = bodyTypeService.getRecordsNumber();
+        long actual = bodyTypeServiceImpl.getRecordsNumber();
         assertEquals(expected, actual);
 
         verify(bodyTypeDAO).getRecordsNumber();
@@ -59,7 +59,7 @@ class BodyTypeServiceImplTest {
 
         when(bodyTypeDAO.getRecordsNumber()).thenReturn(recordsNumber);
 
-        long actual = bodyTypeService.getRecordsNumber();
+        long actual = bodyTypeServiceImpl.getRecordsNumber();
         assertEquals(expected, actual);
 
         verify(bodyTypeDAO).getRecordsNumber();
@@ -70,7 +70,7 @@ class BodyTypeServiceImplTest {
         int pageNumber = -1;
         int pageSize = -1;
 
-        assertThrows(QueryParametersMismatchException.class, () -> bodyTypeService.getAll(pageNumber, pageSize));
+        assertThrows(QueryParametersMismatchException.class, () -> bodyTypeServiceImpl.getAll(pageNumber, pageSize));
 
         verify(bodyTypeDAO, never()).getAll(anyInt(), anyInt());
     }
@@ -86,7 +86,7 @@ class BodyTypeServiceImplTest {
 
         when(bodyTypeDAO.getAll(anyInt(), anyInt())).thenReturn(bodyTypes);
 
-        List<BodyType> actual = bodyTypeService.getAll(pageNumber, pageSize);
+        List<BodyType> actual = bodyTypeServiceImpl.getAll(pageNumber, pageSize);
         assertEquals(expected, actual);
 
         verify(bodyTypeDAO).getAll(anyInt(), anyInt());
@@ -96,7 +96,7 @@ class BodyTypeServiceImplTest {
     void getById_ShouldThrownException_WhenMethodParameterIsInvalid() {
         long id = -1;
 
-        assertThrows(QueryParametersMismatchException.class, () -> bodyTypeService.getById(id));
+        assertThrows(QueryParametersMismatchException.class, () -> bodyTypeServiceImpl.getById(id));
 
         verify(bodyTypeDAO, never()).getById(anyLong());
     }
@@ -108,8 +108,7 @@ class BodyTypeServiceImplTest {
 
         when(bodyTypeDAO.getById(anyLong())).thenReturn(bodyType);
 
-
-        BodyType actual = bodyTypeService.getById(id);
+        BodyType actual = bodyTypeServiceImpl.getById(id);
         assertEquals(expected, actual);
 
         verify(bodyTypeDAO).getById(anyLong());
