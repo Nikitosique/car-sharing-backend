@@ -60,7 +60,7 @@ class CarBrandsControllerTest {
         carBrands.add(new CarBrand(1, "nissan"));
         carBrands.add(new CarBrand(2, "audi"));
 
-        recordsNumber = 2;
+        recordsNumber = 2L;
         carBrandsListSize = carBrands.size();
         pageNumber = 0;
         carBrand = carBrands.get(0);

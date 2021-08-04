@@ -76,7 +76,7 @@ class CarsControllerTest {
 
         car = cars.get(0);
 
-        recordsNumber = 2;
+        recordsNumber = 2L;
         carsListSize = cars.size();
         pageNumber = 0;
 
@@ -162,8 +162,8 @@ class CarsControllerTest {
     @Test
     public void getById_ShouldReturnRecord_WhenPathParameterIsValid() throws Exception {
         Car expected = new Car();
-        expected.setId(1);
-        expected.setModelId(7);
+        expected.setId(1L);
+        expected.setModelId(7L);
         expected.setRegistrationPlate("AA1234BB");
         expected.setRentCostPerMin(10);
         expected.setColor("red");

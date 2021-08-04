@@ -40,7 +40,7 @@ class CarBrandServiceImplTest {
 
     @Test
     public void getRecordsNumber_ShouldReturnZero_WhenTableIsEmpty() {
-        long expected = 0;
+        long expected = 0L;
 
         when(carBrandDAO.getRecordsNumber()).thenReturn(0L);
 
@@ -53,7 +53,7 @@ class CarBrandServiceImplTest {
     @Test
     public void getRecordsNumber_ShouldReturnRecordsNumber_WhenTableIsNotEmpty() {
         long recordsNumber = carBrands.size();
-        long expected = 2;
+        long expected = 2L;
 
         when(carBrandDAO.getRecordsNumber()).thenReturn(recordsNumber);
 
@@ -92,7 +92,7 @@ class CarBrandServiceImplTest {
 
     @Test
     void getById_ShouldThrownException_WhenMethodParameterIsInvalid() {
-        long id = -1;
+        long id = -1L;
 
         assertThrows(QueryParametersMismatchException.class, () -> carBrandServiceImpl.getById(id));
 

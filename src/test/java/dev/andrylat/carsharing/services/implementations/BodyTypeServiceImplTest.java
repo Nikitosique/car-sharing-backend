@@ -42,7 +42,7 @@ class BodyTypeServiceImplTest {
 
     @Test
     public void getRecordsNumber_ShouldReturnZero_WhenTableIsEmpty() {
-        long expected = 0;
+        long expected = 0L;
 
         when(bodyTypeDAO.getRecordsNumber()).thenReturn(0L);
 
@@ -55,7 +55,7 @@ class BodyTypeServiceImplTest {
     @Test
     public void getRecordsNumber_ShouldReturnRecordsNumber_WhenTableIsNotEmpty() {
         long recordsNumber = bodyTypes.size();
-        long expected = 2;
+        long expected = 2L;
 
         when(bodyTypeDAO.getRecordsNumber()).thenReturn(recordsNumber);
 
@@ -94,7 +94,7 @@ class BodyTypeServiceImplTest {
 
     @Test
     void getById_ShouldThrownException_WhenMethodParameterIsInvalid() {
-        long id = -1;
+        long id = -1L;
 
         assertThrows(QueryParametersMismatchException.class, () -> bodyTypeServiceImpl.getById(id));
 

@@ -30,6 +30,22 @@ class RentSessionDAOTest {
     @Test
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql({"classpath:initalscripts/dao/rentsession/RentSessionDataDeletion.sql"})
+    public void getRecordsNumber_ShouldReturnZero_WhenTableIsEmpty() {
+        long expected = 0;
+        long actual = rentSessionDAO.getRecordsNumber();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getRecordsNumber_ShouldReturnRecordsNumber_WhenTableIsNotEmpty() {
+        long expected = 3;
+        long actual = rentSessionDAO.getRecordsNumber();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    @Sql({"classpath:initalscripts/dao/rentsession/RentSessionDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
         List<RentSession> expected = new ArrayList<>();
 

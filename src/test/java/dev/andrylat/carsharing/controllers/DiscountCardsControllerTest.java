@@ -1,7 +1,7 @@
 package dev.andrylat.carsharing.controllers;
 
-import dev.andrylat.carsharing.models.CarModel;
-import dev.andrylat.carsharing.services.CarModelService;
+import dev.andrylat.carsharing.models.DiscountCard;
+import dev.andrylat.carsharing.services.DiscountCardService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,13 +30,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-class CarModelsControllerTest {
+class DiscountCardsControllerTest {
 
     @Mock
-    private CarModelService carModelService;
+    private DiscountCardService discountCardService;
 
     @InjectMocks
-    private CarModelsController carModelsController;
+    private DiscountCardsController discountCardsController;
 
     @Captor
     private ArgumentCaptor<Integer> pageNumberCaptor;
@@ -49,44 +49,34 @@ class CarModelsControllerTest {
 
     private MockMvc mockMvc;
     private long recordsNumber;
-    private int carModelsListSize;
+    private int discountCardsListSize;
     private int pageNumber;
-    private CarModel carModel;
-    private List<CarModel> carModels;
+    private DiscountCard discountCard;
+    private List<DiscountCard> discountCards;
 
     @BeforeEach
     public void setUp() {
-        carModels = new ArrayList<>();
+        discountCards = new ArrayList<>();
 
-        CarModel temporal = new CarModel();
-        temporal.setId(1);
-        temporal.setBodyId(1);
-        temporal.setBrandId(5);
-        temporal.setName("Type-345");
-        temporal.setEngineDisplacement(1.8);
-        temporal.setFuelId(2);
-        temporal.setGearboxType("manual");
-        temporal.setProductionYear(2017);
-        carModels.add(temporal);
+        DiscountCard temporal = new DiscountCard();
+        temporal.setId(1L);
+        temporal.setCardNumber("8267bacb06d2");
+        temporal.setDiscountValue(6);
+        discountCards.add(temporal);
 
-        temporal = new CarModel();
-        temporal.setId(2);
-        temporal.setBodyId(2);
-        temporal.setBrandId(3);
-        temporal.setName("Model-CE1");
-        temporal.setEngineDisplacement(2.0);
-        temporal.setFuelId(1);
-        temporal.setGearboxType("automatic");
-        temporal.setProductionYear(2020);
-        carModels.add(carModel);
+        temporal = new DiscountCard();
+        temporal.setId(2L);
+        temporal.setCardNumber("96853b88d930");
+        temporal.setDiscountValue(4);
+        discountCards.add(temporal);
 
         recordsNumber = 2L;
-        carModelsListSize = carModels.size();
+        discountCardsListSize = discountCards.size();
         pageNumber = 0;
-        carModel = carModels.get(0);
+        discountCard = discountCards.get(0);
 
         mockMvc = MockMvcBuilders
-                .standaloneSetup(carModelsController)
+                .standaloneSetup(discountCardsController)
                 .build();
     }
 
@@ -95,95 +85,90 @@ class CarModelsControllerTest {
         mockMvc.perform(get("/invalidUrl"))
                 .andExpect(status().isNotFound());
 
-        verify(carModelService, never()).getAll(anyInt(), anyInt());
+        verify(discountCardService, never()).getAll(anyInt(), anyInt());
     }
 
     @Test
     public void getAll_ShouldThrownException_WhenQueryParametersAreInvalid() {
-        when(carModelService.getAll(anyInt(), anyInt())).thenThrow(MockitoException.class);
+        when(discountCardService.getAll(anyInt(), anyInt())).thenThrow(MockitoException.class);
 
         assertThrows(NestedServletException.class,
-                () -> mockMvc.perform(get("/carmodels?pageNumber=-1&pageSize=-1")));
+                () -> mockMvc.perform(get("/discountcards?pageNumber=-1&pageSize=-1")));
 
-        verify(carModelService).getAll(anyInt(), anyInt());
+        verify(discountCardService).getAll(anyInt(), anyInt());
     }
 
     @Test
     public void getAll_ShouldReturnRecords_WhenQueryParametersAreAbsent() throws Exception {
         int pageSize = 10;
 
-        when(carModelService.getAll(anyInt(), anyInt())).thenReturn(carModels);
-        when(carModelService.getRecordsNumber()).thenReturn(recordsNumber);
+        when(discountCardService.getAll(anyInt(), anyInt())).thenReturn(discountCards);
+        when(discountCardService.getRecordsNumber()).thenReturn(recordsNumber);
 
-        mockMvc.perform(get("/carmodels"))
+        mockMvc.perform(get("/discountcards"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("carmodels/getAll"))
-                .andExpect(model().attribute("carModels", hasSize(carModelsListSize)))
+                .andExpect(view().name("discountcards/getAll"))
+                .andExpect(model().attribute("discountCards", hasSize(discountCardsListSize)))
                 .andExpect(model().attribute("recordsNumber", recordsNumber))
                 .andExpect(model().attribute("pageNumber", pageNumber))
                 .andExpect(model().attribute("pageSize", pageSize));
 
-        verify(carModelService).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
+        verify(discountCardService).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
 
         assertThat(pageNumberCaptor.getValue(), is(pageNumber));
         assertThat(pageSizeCaptor.getValue(), is(pageSize));
 
-        verify(carModelService).getRecordsNumber();
+        verify(discountCardService).getRecordsNumber();
     }
 
     @Test
     public void getAll_ShouldReturnRecords_WhenQueryParametersArePresent() throws Exception {
         int pageSize = 5;
 
-        when(carModelService.getAll(anyInt(), anyInt())).thenReturn(carModels);
-        when(carModelService.getRecordsNumber()).thenReturn(recordsNumber);
+        when(discountCardService.getAll(anyInt(), anyInt())).thenReturn(discountCards);
+        when(discountCardService.getRecordsNumber()).thenReturn(recordsNumber);
 
-        mockMvc.perform(get("/carmodels?pageNumber=0&pageSize=5"))
+        mockMvc.perform(get("/discountcards?pageNumber=0&pageSize=5"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("carmodels/getAll"))
-                .andExpect(model().attribute("carModels", hasSize(carModelsListSize)))
+                .andExpect(view().name("discountcards/getAll"))
+                .andExpect(model().attribute("discountCards", hasSize(discountCardsListSize)))
                 .andExpect(model().attribute("recordsNumber", recordsNumber))
                 .andExpect(model().attribute("pageNumber", pageNumber))
                 .andExpect(model().attribute("pageSize", pageSize));
 
-        verify(carModelService).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
+        verify(discountCardService).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
 
         assertThat(pageNumberCaptor.getValue(), is(pageNumber));
         assertThat(pageSizeCaptor.getValue(), is(pageSize));
 
-        verify(carModelService).getRecordsNumber();
+        verify(discountCardService).getRecordsNumber();
     }
 
     @Test
     public void getById_ShouldThrowException_WhenPathParameterIsInvalid() {
-        when(carModelService.getById(anyLong())).thenThrow(MockitoException.class);
+        when(discountCardService.getById(anyLong())).thenThrow(MockitoException.class);
 
         assertThrows(NestedServletException.class,
-                () -> mockMvc.perform(get("/carmodels/-1")));
+                () -> mockMvc.perform(get("/discountcards/-1")));
 
-        verify(carModelService).getById(anyLong());
+        verify(discountCardService).getById(anyLong());
     }
 
     @Test
     public void getById_ShouldReturnRecord_WhenPathParameterIsValid() throws Exception {
-        CarModel expected = new CarModel();
+        DiscountCard expected = new DiscountCard();
         expected.setId(1L);
-        expected.setBodyId(1L);
-        expected.setBrandId(5L);
-        expected.setName("Type-345");
-        expected.setEngineDisplacement(1.8);
-        expected.setFuelId(2L);
-        expected.setGearboxType("manual");
-        expected.setProductionYear(2017);
+        expected.setCardNumber("8267bacb06d2");
+        expected.setDiscountValue(6);
 
-        when(carModelService.getById(anyLong())).thenReturn(carModel);
+        when(discountCardService.getById(anyLong())).thenReturn(discountCard);
 
-        mockMvc.perform(get("/carmodels/1"))
+        mockMvc.perform(get("/discountcards/1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("carmodels/getById"))
-                .andExpect(model().attribute("carModel", expected));
+                .andExpect(view().name("discountcards/getById"))
+                .andExpect(model().attribute("discountCard", expected));
 
-        verify(carModelService).getById(idCaptor.capture());
+        verify(discountCardService).getById(idCaptor.capture());
 
         assertThat(idCaptor.getValue(), is(1L));
     }

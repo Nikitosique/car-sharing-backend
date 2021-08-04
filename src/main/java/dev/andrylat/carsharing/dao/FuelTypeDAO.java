@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Component
 public class FuelTypeDAO {
+    private static final String GET_FUEL_TYPES_NUMBER_SQL_QUERY = "SELECT COUNT(*) FROM fuel_types";
     private static final String GET_ALL_FUEL_TYPES_SQL_QUERY = "SELECT * FROM fuel_types ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_FUEL_TYPE_BY_ID_SQL_QUERY = "SELECT * FROM fuel_types WHERE id=?";
     private static final String ADD_FUEL_TYPE_SQL_QUERY = "INSERT INTO fuel_types(name) VALUES(?)";
@@ -26,6 +27,10 @@ public class FuelTypeDAO {
     @Autowired
     public FuelTypeDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public long getRecordsNumber() {
+        return jdbcTemplate.queryForObject(GET_FUEL_TYPES_NUMBER_SQL_QUERY, Long.class);
     }
 
     public List<FuelType> getAll(int pageNumber, int pageSize) {

@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @Component
 public class UserDAO {
+    private static final String GET_USERS_NUMBER_SQL_QUERY = "SELECT COUNT(*) FROM users";
     private static final String GET_ALL_USERS_SQL_QUERY = "SELECT * FROM users ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_USER_BY_ID_SQL_QUERY = "SELECT * FROM users WHERE id=?";
     private static final String DELETE_USER_BY_ID_SQL_QUERY = "DELETE FROM users WHERE id=?";
@@ -24,6 +25,7 @@ public class UserDAO {
     private static final String UPDATE_USER_BY_ID_SQL_QUERY = "UPDATE users SET email = ?, password = ?, " +
             "discount_card_id = ?, type = ? WHERE id = ?";
 
+    private static final String GET_CUSTOMERS_NUMBER_BY_MANAGER_ID_SQL_QUERY = "SELECT COUNT(*) FROM customers_managers WHERE manager_id = ?";
     private static final String GET_CUSTOMERS_BY_MANAGER_ID_SQL_QUERY = "SELECT customer_id FROM customers_managers " +
             "WHERE manager_id = ? ORDER BY customer_id LIMIT ? OFFSET ?";
     private static final String ASSIGN_CUSTOMER_TO_MANAGER_SQL_QUERY = "INSERT INTO customers_managers VALUES (?, ?)";
@@ -35,6 +37,10 @@ public class UserDAO {
     @Autowired
     public UserDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public long getRecordsNumber() {
+        return jdbcTemplate.queryForObject(GET_USERS_NUMBER_SQL_QUERY, Long.class);
     }
 
     public List<User> getAll(int pageNumber, int pageSize) {
@@ -89,6 +95,10 @@ public class UserDAO {
         int deletedRowsNumber = jdbcTemplate.update(DELETE_USER_BY_ID_SQL_QUERY, id);
 
         return deletedRowsNumber > 0;
+    }
+
+    public long getCustomersNumberByManagerId(long managerId) {
+        return jdbcTemplate.queryForObject(GET_CUSTOMERS_NUMBER_BY_MANAGER_ID_SQL_QUERY, Long.class, managerId);
     }
 
     public List<Long> getCustomersIdByManagerId(long managerId, int pageNumber, int pageSize) {

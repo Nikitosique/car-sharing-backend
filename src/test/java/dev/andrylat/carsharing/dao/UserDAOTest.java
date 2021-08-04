@@ -27,6 +27,22 @@ class UserDAOTest {
     @Test
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql({"classpath:initalscripts/dao/user/UserDataDeletion.sql"})
+    public void getRecordsNumber_ShouldReturnZero_WhenTableIsEmpty() {
+        long expected = 0;
+        long actual = userDAO.getRecordsNumber();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getRecordsNumber_ShouldReturnRecordsNumber_WhenTableIsNotEmpty() {
+        long expected = 3;
+        long actual = userDAO.getRecordsNumber();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    @Sql({"classpath:initalscripts/dao/user/UserDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
         List<User> expected = new ArrayList<>();
 
@@ -149,6 +165,36 @@ class UserDAOTest {
     public void deleteById_ShouldDeleteRecord_WhenDeletedRecordExists() {
         boolean expected = true;
         boolean actual = userDAO.deleteById(1);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:initalscripts/dao/user/CustomerManagerTableCreation.sql",
+            "classpath:initalscripts/dao/user/CustomerManagerDataInsertion.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getCustomersNumberByManagerId_ShouldReturnZero_WhenManagerWithSuchIdNotExists() {
+        long expected = 0;
+
+        long managerId = 0;
+
+        long actual = userDAO.getCustomersNumberByManagerId(managerId);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:initalscripts/dao/user/CustomerManagerTableCreation.sql",
+            "classpath:initalscripts/dao/user/CustomerManagerDataInsertion.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getCustomersNumberByManagerId_ShouldReturnNumber_WhenManagerWithSuchIdNotExists() {
+        long expected = 2;
+
+        long managerId = 3;
+
+        long actual = userDAO.getCustomersNumberByManagerId(managerId);
         assertEquals(expected, actual);
     }
 

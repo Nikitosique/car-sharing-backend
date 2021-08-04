@@ -61,7 +61,7 @@ class CarModelServiceImplTest {
 
     @Test
     public void getRecordsNumber_ShouldReturnZero_WhenTableIsEmpty() {
-        long expected = 0;
+        long expected = 0L;
 
         when(carModelDAO.getRecordsNumber()).thenReturn(0L);
 
@@ -74,7 +74,7 @@ class CarModelServiceImplTest {
     @Test
     public void getRecordsNumber_ShouldReturnRecordsNumber_WhenTableIsNotEmpty() {
         long recordsNumber = carModels.size();
-        long expected = 2;
+        long expected = 2L;
 
         when(carModelDAO.getRecordsNumber()).thenReturn(recordsNumber);
 
@@ -101,23 +101,23 @@ class CarModelServiceImplTest {
 
         List<CarModel> expected = new ArrayList<>();
         CarModel temporal = new CarModel();
-        temporal.setId(1);
-        temporal.setBodyId(1);
-        temporal.setBrandId(5);
+        temporal.setId(1L);
+        temporal.setBodyId(1L);
+        temporal.setBrandId(5L);
         temporal.setName("Type-345");
         temporal.setEngineDisplacement(1.8);
-        temporal.setFuelId(2);
+        temporal.setFuelId(2L);
         temporal.setGearboxType("manual");
         temporal.setProductionYear(2017);
         expected.add(temporal);
 
         temporal = new CarModel();
-        temporal.setId(2);
-        temporal.setBodyId(2);
-        temporal.setBrandId(3);
+        temporal.setId(2L);
+        temporal.setBodyId(2L);
+        temporal.setBrandId(3L);
         temporal.setName("Model-CE1");
         temporal.setEngineDisplacement(2.0);
-        temporal.setFuelId(1);
+        temporal.setFuelId(1L);
         temporal.setGearboxType("automatic");
         temporal.setProductionYear(2020);
         expected.add(temporal);
@@ -132,7 +132,7 @@ class CarModelServiceImplTest {
 
     @Test
     void getById_ShouldThrownException_WhenMethodParameterIsInvalid() {
-        long id = -1;
+        long id = -1L;
 
         assertThrows(QueryParametersMismatchException.class, () -> carModelServiceImpl.getById(id));
 
@@ -144,12 +144,12 @@ class CarModelServiceImplTest {
         long id = 1L;
 
         CarModel expected = new CarModel();
-        expected.setId(1);
-        expected.setBodyId(1);
-        expected.setBrandId(5);
+        expected.setId(1L);
+        expected.setBodyId(1L);
+        expected.setBrandId(5L);
         expected.setName("Type-345");
         expected.setEngineDisplacement(1.8);
-        expected.setFuelId(2);
+        expected.setFuelId(2L);
         expected.setGearboxType("manual");
         expected.setProductionYear(2017);
 

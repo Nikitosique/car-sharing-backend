@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Discount Card</title>
+</head>
+
+<body>
+<p th:text="${'ID: ' + discountCard.getId()}">ID</p>
+<p th:text="${'Discount Value: ' + discountCard.getDiscountValue}">Discount Value</p>
+<p th:text="${'Card Number: ' + discountCard.getCardNumber}">Card Number</p>
+</body>
+</html>

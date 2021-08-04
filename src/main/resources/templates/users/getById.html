@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Body Type</title>
+</head>
+
+<body>
+<p th:text="${'ID: ' + user.getId()}">ID</p>
+<p th:text="${'Discount Card Id: ' + user.getDiscountCardId}">Discount Card Id</p>
+<p th:text="${'Email: ' + user.getEmail}">Email</p>
+<p th:text="${'Password: ' + user.getPassword()}">Password</p>
+<p th:text="${'Type: ' + user.getType}">Type</p>
+</body>
+
+</html>

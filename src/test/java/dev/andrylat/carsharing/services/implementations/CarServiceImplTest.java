@@ -33,8 +33,8 @@ class CarServiceImplTest {
         cars = new ArrayList<>();
 
         Car temporal = new Car();
-        temporal.setId(1);
-        temporal.setModelId(7);
+        temporal.setId(1L);
+        temporal.setModelId(7L);
         temporal.setRegistrationPlate("AA1234BB");
         temporal.setRentCostPerMin(10);
         temporal.setColor("red");
@@ -42,8 +42,8 @@ class CarServiceImplTest {
         cars.add(temporal);
 
         temporal = new Car();
-        temporal.setId(2);
-        temporal.setModelId(32);
+        temporal.setId(2L);
+        temporal.setModelId(32L);
         temporal.setRegistrationPlate("QZ1WD403");
         temporal.setRentCostPerMin(20);
         temporal.setColor("white");
@@ -55,7 +55,7 @@ class CarServiceImplTest {
 
     @Test
     public void getRecordsNumber_ShouldReturnZero_WhenTableIsEmpty() {
-        long expected = 0;
+        long expected = 0L;
 
         when(carDAO.getRecordsNumber()).thenReturn(0L);
 
@@ -68,7 +68,7 @@ class CarServiceImplTest {
     @Test
     public void getRecordsNumber_ShouldReturnRecordsNumber_WhenTableIsNotEmpty() {
         long recordsNumber = cars.size();
-        long expected = 2;
+        long expected = 2L;
 
         when(carDAO.getRecordsNumber()).thenReturn(recordsNumber);
 
@@ -95,8 +95,8 @@ class CarServiceImplTest {
 
         List<Car> expected = new ArrayList<>();
         Car temporal = new Car();
-        temporal.setId(1);
-        temporal.setModelId(7);
+        temporal.setId(1L);
+        temporal.setModelId(7L);
         temporal.setRegistrationPlate("AA1234BB");
         temporal.setRentCostPerMin(10);
         temporal.setColor("red");
@@ -104,8 +104,8 @@ class CarServiceImplTest {
         expected.add(temporal);
 
         temporal = new Car();
-        temporal.setId(2);
-        temporal.setModelId(32);
+        temporal.setId(2L);
+        temporal.setModelId(32L);
         temporal.setRegistrationPlate("QZ1WD403");
         temporal.setRentCostPerMin(20);
         temporal.setColor("white");
@@ -122,7 +122,7 @@ class CarServiceImplTest {
 
     @Test
     void getById_ShouldThrownException_WhenMethodParameterIsInvalid() {
-        long id = -1;
+        long id = -1L;
 
         assertThrows(QueryParametersMismatchException.class, () -> carServiceImpl.getById(id));
 
@@ -134,8 +134,8 @@ class CarServiceImplTest {
         long id = 1L;
 
         Car expected = new Car();
-        expected.setId(1);
-        expected.setModelId(7);
+        expected.setId(1L);
+        expected.setModelId(7L);
         expected.setRegistrationPlate("AA1234BB");
         expected.setRentCostPerMin(10);
         expected.setColor("red");

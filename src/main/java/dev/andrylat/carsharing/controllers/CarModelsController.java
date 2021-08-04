@@ -32,7 +32,7 @@ public class CarModelsController {
     }
 
     @GetMapping("/{id}")
-    public String getById(@PathVariable("id") int id, Model model) {
+    public String getById(@PathVariable("id") long id, Model model) {
         model.addAttribute("carModel", carModelService.getById(id));
         return "carmodels/getById";
     }

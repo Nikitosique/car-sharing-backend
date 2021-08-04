@@ -28,6 +28,22 @@ class DiscountCardsDAOTest {
     @Test
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql({"classpath:initalscripts/dao/discountcard/DiscountCardDataDeletion.sql"})
+    public void getRecordsNumber_ShouldReturnZero_WhenTableIsEmpty() {
+        long expected = 0;
+        long actual = discountCardDAO.getRecordsNumber();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getRecordsNumber_ShouldReturnRecordsNumber_WhenTableIsNotEmpty() {
+        long expected = 3;
+        long actual = discountCardDAO.getRecordsNumber();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    @Sql({"classpath:initalscripts/dao/discountcard/DiscountCardDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
         List<DiscountCard> expected = new ArrayList<>();
 

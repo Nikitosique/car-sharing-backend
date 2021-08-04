@@ -1,7 +1,7 @@
 package dev.andrylat.carsharing.controllers;
 
-import dev.andrylat.carsharing.models.CarModel;
-import dev.andrylat.carsharing.services.CarModelService;
+import dev.andrylat.carsharing.models.FuelType;
+import dev.andrylat.carsharing.services.FuelTypeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,13 +30,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-class CarModelsControllerTest {
+class FuelTypesControllerTest {
 
     @Mock
-    private CarModelService carModelService;
+    private FuelTypeService fuelTypeService;
 
     @InjectMocks
-    private CarModelsController carModelsController;
+    private FuelTypesController fuelTypesController;
 
     @Captor
     private ArgumentCaptor<Integer> pageNumberCaptor;
@@ -49,44 +49,24 @@ class CarModelsControllerTest {
 
     private MockMvc mockMvc;
     private long recordsNumber;
-    private int carModelsListSize;
+    private int fuelTypesListSize;
     private int pageNumber;
-    private CarModel carModel;
-    private List<CarModel> carModels;
+    private FuelType fuelType;
+    private List<FuelType> fuelTypes;
 
     @BeforeEach
     public void setUp() {
-        carModels = new ArrayList<>();
-
-        CarModel temporal = new CarModel();
-        temporal.setId(1);
-        temporal.setBodyId(1);
-        temporal.setBrandId(5);
-        temporal.setName("Type-345");
-        temporal.setEngineDisplacement(1.8);
-        temporal.setFuelId(2);
-        temporal.setGearboxType("manual");
-        temporal.setProductionYear(2017);
-        carModels.add(temporal);
-
-        temporal = new CarModel();
-        temporal.setId(2);
-        temporal.setBodyId(2);
-        temporal.setBrandId(3);
-        temporal.setName("Model-CE1");
-        temporal.setEngineDisplacement(2.0);
-        temporal.setFuelId(1);
-        temporal.setGearboxType("automatic");
-        temporal.setProductionYear(2020);
-        carModels.add(carModel);
+        fuelTypes = new ArrayList<>();
+        fuelTypes.add(new FuelType(1L, "gasoline"));
+        fuelTypes.add(new FuelType(2L, "electricity"));
 
         recordsNumber = 2L;
-        carModelsListSize = carModels.size();
+        fuelTypesListSize = fuelTypes.size();
         pageNumber = 0;
-        carModel = carModels.get(0);
+        fuelType = fuelTypes.get(0);
 
         mockMvc = MockMvcBuilders
-                .standaloneSetup(carModelsController)
+                .standaloneSetup(fuelTypesController)
                 .build();
     }
 
@@ -95,95 +75,87 @@ class CarModelsControllerTest {
         mockMvc.perform(get("/invalidUrl"))
                 .andExpect(status().isNotFound());
 
-        verify(carModelService, never()).getAll(anyInt(), anyInt());
+        verify(fuelTypeService, never()).getAll(anyInt(), anyInt());
     }
 
     @Test
     public void getAll_ShouldThrownException_WhenQueryParametersAreInvalid() {
-        when(carModelService.getAll(anyInt(), anyInt())).thenThrow(MockitoException.class);
+        when(fuelTypeService.getAll(anyInt(), anyInt())).thenThrow(MockitoException.class);
 
         assertThrows(NestedServletException.class,
-                () -> mockMvc.perform(get("/carmodels?pageNumber=-1&pageSize=-1")));
+                () -> mockMvc.perform(get("/fueltypes?pageNumber=-1&pageSize=-1")));
 
-        verify(carModelService).getAll(anyInt(), anyInt());
+        verify(fuelTypeService).getAll(anyInt(), anyInt());
     }
 
     @Test
     public void getAll_ShouldReturnRecords_WhenQueryParametersAreAbsent() throws Exception {
         int pageSize = 10;
 
-        when(carModelService.getAll(anyInt(), anyInt())).thenReturn(carModels);
-        when(carModelService.getRecordsNumber()).thenReturn(recordsNumber);
+        when(fuelTypeService.getAll(anyInt(), anyInt())).thenReturn(fuelTypes);
+        when(fuelTypeService.getRecordsNumber()).thenReturn(recordsNumber);
 
-        mockMvc.perform(get("/carmodels"))
+        mockMvc.perform(get("/fueltypes"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("carmodels/getAll"))
-                .andExpect(model().attribute("carModels", hasSize(carModelsListSize)))
+                .andExpect(view().name("fueltypes/getAll"))
+                .andExpect(model().attribute("fuelTypes", hasSize(fuelTypesListSize)))
                 .andExpect(model().attribute("recordsNumber", recordsNumber))
                 .andExpect(model().attribute("pageNumber", pageNumber))
                 .andExpect(model().attribute("pageSize", pageSize));
 
-        verify(carModelService).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
+        verify(fuelTypeService).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
 
         assertThat(pageNumberCaptor.getValue(), is(pageNumber));
         assertThat(pageSizeCaptor.getValue(), is(pageSize));
 
-        verify(carModelService).getRecordsNumber();
+        verify(fuelTypeService).getRecordsNumber();
     }
 
     @Test
     public void getAll_ShouldReturnRecords_WhenQueryParametersArePresent() throws Exception {
         int pageSize = 5;
 
-        when(carModelService.getAll(anyInt(), anyInt())).thenReturn(carModels);
-        when(carModelService.getRecordsNumber()).thenReturn(recordsNumber);
+        when(fuelTypeService.getAll(anyInt(), anyInt())).thenReturn(fuelTypes);
+        when(fuelTypeService.getRecordsNumber()).thenReturn(recordsNumber);
 
-        mockMvc.perform(get("/carmodels?pageNumber=0&pageSize=5"))
+        mockMvc.perform(get("/fueltypes?pageNumber=0&pageSize=5"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("carmodels/getAll"))
-                .andExpect(model().attribute("carModels", hasSize(carModelsListSize)))
+                .andExpect(view().name("fueltypes/getAll"))
+                .andExpect(model().attribute("fuelTypes", hasSize(fuelTypesListSize)))
                 .andExpect(model().attribute("recordsNumber", recordsNumber))
                 .andExpect(model().attribute("pageNumber", pageNumber))
                 .andExpect(model().attribute("pageSize", pageSize));
 
-        verify(carModelService).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
+        verify(fuelTypeService).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
 
         assertThat(pageNumberCaptor.getValue(), is(pageNumber));
         assertThat(pageSizeCaptor.getValue(), is(pageSize));
 
-        verify(carModelService).getRecordsNumber();
+        verify(fuelTypeService).getRecordsNumber();
     }
 
     @Test
     public void getById_ShouldThrowException_WhenPathParameterIsInvalid() {
-        when(carModelService.getById(anyLong())).thenThrow(MockitoException.class);
+        when(fuelTypeService.getById(anyLong())).thenThrow(MockitoException.class);
 
         assertThrows(NestedServletException.class,
-                () -> mockMvc.perform(get("/carmodels/-1")));
+                () -> mockMvc.perform(get("/fueltypes/-1")));
 
-        verify(carModelService).getById(anyLong());
+        verify(fuelTypeService).getById(anyLong());
     }
 
     @Test
     public void getById_ShouldReturnRecord_WhenPathParameterIsValid() throws Exception {
-        CarModel expected = new CarModel();
-        expected.setId(1L);
-        expected.setBodyId(1L);
-        expected.setBrandId(5L);
-        expected.setName("Type-345");
-        expected.setEngineDisplacement(1.8);
-        expected.setFuelId(2L);
-        expected.setGearboxType("manual");
-        expected.setProductionYear(2017);
+        FuelType expected = new FuelType(1L, "gasoline");
 
-        when(carModelService.getById(anyLong())).thenReturn(carModel);
+        when(fuelTypeService.getById(anyLong())).thenReturn(fuelType);
 
-        mockMvc.perform(get("/carmodels/1"))
+        mockMvc.perform(get("/fueltypes/1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("carmodels/getById"))
-                .andExpect(model().attribute("carModel", expected));
+                .andExpect(view().name("fueltypes/getById"))
+                .andExpect(model().attribute("fuelType", expected));
 
-        verify(carModelService).getById(idCaptor.capture());
+        verify(fuelTypeService).getById(idCaptor.capture());
 
         assertThat(idCaptor.getValue(), is(1L));
     }

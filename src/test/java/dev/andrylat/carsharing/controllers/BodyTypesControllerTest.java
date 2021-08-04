@@ -58,7 +58,7 @@ class BodyTypesControllerTest {
         bodyTypes.add(new BodyType(1, "sedan"));
         bodyTypes.add(new BodyType(2, "SUV"));
 
-        recordsNumber = 2;
+        recordsNumber = 2L;
         bodyTypesListSize = bodyTypes.size();
         pageNumber = 0;
         bodyType = bodyTypes.get(0);
@@ -144,7 +144,7 @@ class BodyTypesControllerTest {
 
     @Test
     public void getById_ShouldReturnRecord_WhenPathParameterIsValid() throws Exception {
-        BodyType expected = new BodyType(1, "sedan");
+        BodyType expected = new BodyType(1L, "sedan");
 
         when(bodyTypeService.getById(anyLong())).thenReturn(bodyType);
 

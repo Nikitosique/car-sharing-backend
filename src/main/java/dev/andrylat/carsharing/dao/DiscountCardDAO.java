@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Component
 public class DiscountCardDAO {
+    private static final String GET_DISCOUNT_CARDS_NUMBER_SQL_QUERY = "SELECT COUNT(*) FROM discount_cards";
     private static final String GET_ALL_DISCOUNT_CARDS_SQL_QUERY = "SELECT * FROM discount_cards ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_DISCOUNT_CARD_BY_ID_SQL_QUERY = "SELECT * FROM discount_cards WHERE id=?";
     private static final String DELETE_DISCOUNT_CARD_BY_ID_SQL_QUERY = "DELETE FROM discount_cards WHERE id=?";
@@ -30,6 +31,10 @@ public class DiscountCardDAO {
     @Autowired
     public DiscountCardDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public long getRecordsNumber() {
+        return jdbcTemplate.queryForObject(GET_DISCOUNT_CARDS_NUMBER_SQL_QUERY, Long.class);
     }
 
     public List<DiscountCard> getAll(int pageNumber, int pageSize) {

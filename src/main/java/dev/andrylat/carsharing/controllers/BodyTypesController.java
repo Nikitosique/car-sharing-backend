@@ -32,7 +32,7 @@ public class BodyTypesController {
     }
 
     @GetMapping("/{id}")
-    public String getById(@PathVariable("id") int id, Model model) {
+    public String getById(@PathVariable("id") long id, Model model) {
         model.addAttribute("bodyType", bodyTypeService.getById(id));
         return "bodytypes/getById";
     }
