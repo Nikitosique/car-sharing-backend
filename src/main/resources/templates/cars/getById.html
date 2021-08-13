@@ -14,5 +14,19 @@
 <p th:text="${'Color: ' + car.getColor}">Color</p>
 <p th:text="${'Photo: ' + car.getPhoto}">Photo</p>
 
+<form th:method="get" th:action="@{/cars/__${car.getId}__/edit}">
+    <input type="submit" value="Edit record"/>
+</form>
+<br>
+
+<form th:method="post" th:action="@{/cars/__${car.getId}__/delete}">
+    <input type="submit" value="Delete record"/>
+</form>
+<br>
+
+<form th:method="get" th:action="@{/cars}">
+    <input type="submit" value="Back to the table"/>
+</form>
 </body>
+
 </html>

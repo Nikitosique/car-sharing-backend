@@ -4,6 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Rent Sessions</title>
+    <style>
+        .layer {
+            overflow: scroll;
+            width: 600px;
+            height: 50px;
+            padding: 5px;
+            border: solid 1px black;
+        }
+    </style>
 </head>
 
 <body>
@@ -20,7 +29,11 @@
         </thead>
         <tbody>
         <tr th:each="rentSession : ${rentSessions}">
-            <td><span th:text="${rentSession.getId}"> Id </span></td>
+            <td>
+                <a th:href="@{/rentsessions/__${rentSession.getId}__}">
+                    <text th:text="${rentSession.getId}">Id</text>
+                </a>
+            </td>
             <td><span th:text="${rentSession.getCustomerId}"> Customer Id </span></td>
             <td><span th:text="${rentSession.getCarId}"> Car Id </span></td>
             <td><span th:text="${rentSession.getRentSessionCost()}"> Rent session cost </span></td>
@@ -28,30 +41,30 @@
         </tr>
         </tbody>
     </table>
-
     </br>
 
     <text>Please choose page number</text>
-    <div th:if="${((recordsNumber + 0.0) / pageSize - (recordsNumber) / pageSize) > 0}">
-        <div th:with="del = ${(recordsNumber + 0.0) / pageSize}">
-            <text th:each="i : ${#numbers.sequence(0, del)}">
-                <a th:href="@{/rentsessions(pageNumber=${i}, pageSize=${pageSize})}">
-                    <text th:text="${i + 1}"></text>
-                </a>
-            </text>
+    <div class="layer">
+        <div th:if="${((recordsNumber + 0.0) / pageSize - (recordsNumber) / pageSize) > 0}">
+            <div th:with="del = ${(recordsNumber + 0.0) / pageSize}">
+                <text th:each="i : ${#numbers.sequence(0, del)}">
+                    <a th:href="@{/rentsessions(pageNumber=${i}, pageSize=${pageSize})}">
+                        <text th:text="${i + 1}"></text>
+                    </a>
+                </text>
+            </div>
+        </div>
+
+        <div th:if="${(((recordsNumber + 0.0) / pageSize) - ((recordsNumber) / pageSize)) == 0}">
+            <div th:with="del = ${(recordsNumber + 0.0) / pageSize - 1}">
+                <text th:each="i : ${#numbers.sequence(0, del)}">
+                    <a th:href="@{/rentsessions(pageNumber=${i}, pageSize=${pageSize})}">
+                        <text th:text="${i + 1}"></text>
+                    </a>
+                </text>
+            </div>
         </div>
     </div>
-
-    <div th:if="${(((recordsNumber + 0.0) / pageSize) - ((recordsNumber) / pageSize)) == 0}">
-        <div th:with="del = ${(recordsNumber + 0.0) / pageSize - 1}">
-            <text th:each="i : ${#numbers.sequence(0, del)}">
-                <a th:href="@{/rentsessions(pageNumber=${i}, pageSize=${pageSize})}">
-                    <text th:text="${i + 1}"></text>
-                </a>
-            </text>
-        </div>
-    </div>
-
     </br>
 
     <div th:if="${pageNumber + 1 < (0.0 + recordsNumber) / pageSize}">
@@ -66,6 +79,13 @@
 <div th:if="${rentSessions.size} == 0">
     <text>There are no more records. You can</text>
     <a th:href="@{/rentsessions(pageNumber=0, pageSize=${pageSize})}">return to the first page</a>
+</div>
+</br>
+
+<div th:unless="${rentSessions.size} == 0">
+    <form th:method="get" th:action="@{/rentsessions/add}">
+        <input type="submit" value="Add rent session"/>
+    </form>
 </div>
 </body>
 

@@ -26,6 +26,8 @@ public class UserDAO {
             "discount_card_id = ?, type = ? WHERE id = ?";
 
     private static final String GET_CUSTOMERS_NUMBER_BY_MANAGER_ID_SQL_QUERY = "SELECT COUNT(*) FROM customers_managers WHERE manager_id = ?";
+    private static final String GET_ASSIGNMENTS_NUMBER_BY_MANAGER_ID_AND_CUSTOMER_ID_SQL_QUERY = "SELECT COUNT(*) FROM customers_managers " +
+            "WHERE manager_id = ? AND customer_id = ?";
     private static final String GET_CUSTOMERS_BY_MANAGER_ID_SQL_QUERY = "SELECT customer_id FROM customers_managers " +
             "WHERE manager_id = ? ORDER BY customer_id LIMIT ? OFFSET ?";
     private static final String ASSIGN_CUSTOMER_TO_MANAGER_SQL_QUERY = "INSERT INTO customers_managers VALUES (?, ?)";
@@ -116,6 +118,10 @@ public class UserDAO {
     public boolean unassignCustomerFromManager(long customerId, long managerId) {
         int deletedRowsNumber = jdbcTemplate.update(UNASSIGN_CUSTOMER_FROM_MANAGER_SQL_QUERY, customerId, managerId);
         return deletedRowsNumber > 0;
+    }
+
+    public long getAssignmentsNumber(long customerId, long managerId) {
+        return jdbcTemplate.queryForObject(GET_ASSIGNMENTS_NUMBER_BY_MANAGER_ID_AND_CUSTOMER_ID_SQL_QUERY, Long.class, managerId, customerId);
     }
 
 }

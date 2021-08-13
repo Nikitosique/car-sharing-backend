@@ -3,7 +3,9 @@ package dev.andrylat.carsharing.services.implementations;
 import dev.andrylat.carsharing.dao.FuelTypeDAO;
 import dev.andrylat.carsharing.models.FuelType;
 import dev.andrylat.carsharing.services.FuelTypeService;
-import dev.andrylat.carsharing.services.validators.Validator;
+import dev.andrylat.carsharing.services.validators.FuelTypeValidator;
+import dev.andrylat.carsharing.services.validators.ObjectValidator;
+import dev.andrylat.carsharing.services.validators.ParametersValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,32 +27,40 @@ public class FuelTypeServiceImpl implements FuelTypeService {
 
     @Override
     public List<FuelType> getAll(int pageNumber, int pageSize) {
-        Validator.validatePageNumber(pageNumber);
-        Validator.validatePageSize(pageSize);
+        ParametersValidator.validatePageNumber(pageNumber);
+        ParametersValidator.validatePageSize(pageSize);
 
         return fuelTypeDAO.getAll(pageNumber, pageSize);
     }
 
     @Override
     public FuelType getById(long id) {
-        Validator.validateRecordId(id);
+        ParametersValidator.validateRecordId(id);
 
         return fuelTypeDAO.getById(id);
     }
 
     @Override
     public FuelType add(FuelType objectToAdd) {
-        return null;
+        ObjectValidator<FuelType> validator = new FuelTypeValidator();
+        validator.validate(objectToAdd);
+
+        return fuelTypeDAO.add(objectToAdd);
     }
 
     @Override
     public boolean updateById(FuelType updatedObject) {
-        return false;
+        ObjectValidator<FuelType> validator = new FuelTypeValidator();
+        validator.validate(updatedObject);
+
+        return fuelTypeDAO.updateById(updatedObject);
     }
 
     @Override
     public boolean deleteById(long id) {
-        return false;
+        ParametersValidator.validateRecordId(id);
+
+        return fuelTypeDAO.deleteById(id);
     }
 
 }

@@ -1,6 +1,7 @@
 package dev.andrylat.carsharing.services.implementations;
 
 import dev.andrylat.carsharing.dao.DiscountCardDAO;
+import dev.andrylat.carsharing.exceptions.ObjectValidationException;
 import dev.andrylat.carsharing.exceptions.QueryParametersMismatchException;
 import dev.andrylat.carsharing.models.DiscountCard;
 import org.junit.jupiter.api.BeforeEach;
@@ -134,6 +135,106 @@ class DiscountCardServiceImplTest {
         assertEquals(expected, actual);
 
         verify(discountCardDAO).getById(anyLong());
+    }
+
+    @Test
+    public void add_ShouldThrowException_WhenAddedObjectIsNull() {
+        DiscountCard objectToAdd = null;
+
+        assertThrows(ObjectValidationException.class, () -> discountCardServiceImpl.add(objectToAdd));
+
+        verify(discountCardDAO, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldThrowException_WhenAddedObjectIsInvalid() {
+        DiscountCard objectToAdd = new DiscountCard();
+        objectToAdd.setCardNumber("");
+        objectToAdd.setDiscountValue(-1);
+
+        assertThrows(ObjectValidationException.class, () -> discountCardServiceImpl.add(objectToAdd));
+
+        verify(discountCardDAO, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldAddObject_WhenAddedObjectIsValid() {
+        DiscountCard objectToAdd = new DiscountCard();
+        objectToAdd.setId(1L);
+        objectToAdd.setCardNumber("8267bacb06d2");
+        objectToAdd.setDiscountValue(6);
+
+        DiscountCard expected = new DiscountCard();
+        expected.setId(1L);
+        expected.setCardNumber("8267bacb06d2");
+        expected.setDiscountValue(6);
+
+        when(discountCardDAO.add(any())).thenReturn(discountCard);
+
+        DiscountCard actual = discountCardServiceImpl.add(objectToAdd);
+        assertEquals(expected, actual);
+
+        verify(discountCardDAO).add(any());
+    }
+
+    @Test
+    public void updateById_ShouldThrowException_WhenUpdatedObjectIsNull() {
+        DiscountCard objectToUpdate = null;
+
+        assertThrows(ObjectValidationException.class, () -> discountCardServiceImpl.updateById(objectToUpdate));
+
+        verify(discountCardDAO, never()).updateById(any());
+    }
+
+    @Test
+    public void updateById_ShouldThrowException_WhenUpdatedObjectIsInvalid() {
+        DiscountCard objectToUpdate = new DiscountCard();
+        objectToUpdate.setId(-1L);
+        objectToUpdate.setCardNumber("");
+        objectToUpdate.setDiscountValue(-1);
+
+        assertThrows(ObjectValidationException.class, () -> discountCardServiceImpl.updateById(objectToUpdate));
+
+        verify(discountCardDAO, never()).updateById(any());
+    }
+
+    @Test
+    public void updateById_ShouldUpdateObject_WhenUpdatedObjectIsValid() {
+        DiscountCard objectToUpdate = new DiscountCard();
+        objectToUpdate.setId(1L);
+        objectToUpdate.setCardNumber("8267bacb06d2");
+        objectToUpdate.setDiscountValue(6);
+
+        boolean expected = true;
+
+        when(discountCardDAO.updateById(any())).thenReturn(true);
+
+        boolean actual = discountCardServiceImpl.updateById(objectToUpdate);
+        assertEquals(expected, actual);
+
+        verify(discountCardDAO).updateById(any());
+    }
+
+    @Test
+    public void deleteById_ShouldThrowException_WhenMethodParameterIsInvalid() {
+        long id = -1L;
+
+        assertThrows(QueryParametersMismatchException.class, () -> discountCardServiceImpl.deleteById(id));
+
+        verify(discountCardDAO, never()).deleteById(anyLong());
+    }
+
+    @Test
+    public void deleteById_DeleteRecord_WhenMethodParameterIsValid() {
+        long id = 1L;
+        boolean expected = true;
+
+        when(discountCardDAO.deleteById(anyLong())).thenReturn(true);
+
+        boolean actual = discountCardServiceImpl.deleteById(id);
+        assertEquals(expected, actual);
+
+        verify(discountCardDAO).deleteById(anyLong());
     }
 
 }

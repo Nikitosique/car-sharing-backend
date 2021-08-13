@@ -7,7 +7,22 @@
 </head>
 
 <body>
-    <p th:text="${'ID: ' + bodyType.getId()}">ID</p>
-    <p th:text="${'Name: ' + bodyType.getName()}">Name</p>
+<p th:text="${'ID: ' + bodyType.getId()}">ID</p>
+<p th:text="${'Name: ' + bodyType.getName()}">Name</p>
+
+<form th:method="get" th:action="@{/bodytypes/__${bodyType.getId}__/edit}">
+    <input type="submit" value="Edit record"/>
+</form>
+<br>
+
+<form th:method="post" th:action="@{/bodytypes/__${bodyType.getId}__/delete}">
+    <input type="submit" value="Delete record"/>
+</form>
+<br>
+
+<form th:method="get" th:action="@{/bodytypes}">
+    <input type="submit" value="Back to the table"/>
+</form>
 </body>
+
 </html>

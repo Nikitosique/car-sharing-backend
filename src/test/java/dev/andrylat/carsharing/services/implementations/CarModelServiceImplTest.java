@@ -1,6 +1,7 @@
 package dev.andrylat.carsharing.services.implementations;
 
 import dev.andrylat.carsharing.dao.CarModelDAO;
+import dev.andrylat.carsharing.exceptions.ObjectValidationException;
 import dev.andrylat.carsharing.exceptions.QueryParametersMismatchException;
 import dev.andrylat.carsharing.models.CarModel;
 import org.junit.jupiter.api.BeforeEach;
@@ -159,6 +160,132 @@ class CarModelServiceImplTest {
         assertEquals(expected, actual);
 
         verify(carModelDAO).getById(anyLong());
+    }
+
+    @Test
+    public void add_ShouldThrowException_WhenAddedObjectIsNull() {
+        CarModel objectToAdd = null;
+
+        assertThrows(ObjectValidationException.class, () -> carModelServiceImpl.add(objectToAdd));
+
+        verify(carModelDAO, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldThrowException_WhenAddedObjectIsInvalid() {
+        CarModel objectToAdd = new CarModel();
+        objectToAdd.setId(-1L);
+        objectToAdd.setBodyId(-1L);
+        objectToAdd.setBrandId(-1L);
+        objectToAdd.setFuelId(-1L);
+        objectToAdd.setEngineDisplacement(-2.3);
+        objectToAdd.setProductionYear(-1);
+        objectToAdd.setName("");
+        objectToAdd.setGearboxType("");
+
+        assertThrows(ObjectValidationException.class, () -> carModelServiceImpl.add(objectToAdd));
+
+        verify(carModelDAO, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldAddObject_WhenAddedObjectIsValid() {
+        CarModel objectToAdd = new CarModel();
+        objectToAdd.setId(1);
+        objectToAdd.setBodyId(1);
+        objectToAdd.setBrandId(5);
+        objectToAdd.setName("Type-345");
+        objectToAdd.setEngineDisplacement(1.8);
+        objectToAdd.setFuelId(2);
+        objectToAdd.setGearboxType("manual");
+        objectToAdd.setProductionYear(2017);
+
+        CarModel expected = new CarModel();
+        expected.setId(1);
+        expected.setBodyId(1);
+        expected.setBrandId(5);
+        expected.setName("Type-345");
+        expected.setEngineDisplacement(1.8);
+        expected.setFuelId(2);
+        expected.setGearboxType("manual");
+        expected.setProductionYear(2017);
+
+        when(carModelDAO.add(any())).thenReturn(carModel);
+
+        CarModel actual = carModelServiceImpl.add(objectToAdd);
+        assertEquals(expected, actual);
+
+        verify(carModelDAO).add(any());
+    }
+
+    @Test
+    public void updateById_ShouldThrowException_WhenUpdatedObjectIsNull() {
+        CarModel objectToUpdate = null;
+
+        assertThrows(ObjectValidationException.class, () -> carModelServiceImpl.updateById(objectToUpdate));
+
+        verify(carModelDAO, never()).updateById(any());
+    }
+
+    @Test
+    public void updateById_ShouldThrowException_WhenUpdatedObjectIsInvalid() {
+        CarModel objectToUpdate = new CarModel();
+        objectToUpdate.setId(-1L);
+        objectToUpdate.setBodyId(-1L);
+        objectToUpdate.setBrandId(-1L);
+        objectToUpdate.setFuelId(-1L);
+        objectToUpdate.setEngineDisplacement(-2.3);
+        objectToUpdate.setProductionYear(-1);
+        objectToUpdate.setName("");
+        objectToUpdate.setGearboxType("");
+
+        assertThrows(ObjectValidationException.class, () -> carModelServiceImpl.updateById(objectToUpdate));
+
+        verify(carModelDAO, never()).updateById(any());
+    }
+
+    @Test
+    public void updateById_ShouldUpdateObject_WhenUpdatedObjectIsValid() {
+        CarModel objectToUpdate = new CarModel();
+        objectToUpdate.setId(1);
+        objectToUpdate.setBodyId(1);
+        objectToUpdate.setBrandId(5);
+        objectToUpdate.setName("Type-345");
+        objectToUpdate.setEngineDisplacement(1.8);
+        objectToUpdate.setFuelId(2);
+        objectToUpdate.setGearboxType("manual");
+        objectToUpdate.setProductionYear(2017);
+
+        boolean expected = true;
+
+        when(carModelDAO.updateById(any())).thenReturn(true);
+
+        boolean actual = carModelServiceImpl.updateById(objectToUpdate);
+        assertEquals(expected, actual);
+
+        verify(carModelDAO).updateById(any());
+    }
+
+    @Test
+    public void deleteById_ShouldThrowException_WhenMethodParameterIsInvalid() {
+        long id = -1L;
+
+        assertThrows(QueryParametersMismatchException.class, () -> carModelServiceImpl.deleteById(id));
+
+        verify(carModelDAO, never()).deleteById(anyLong());
+    }
+
+    @Test
+    public void deleteById_DeleteRecord_WhenMethodParameterIsValid() {
+        long id = 1L;
+        boolean expected = true;
+
+        when(carModelDAO.deleteById(anyLong())).thenReturn(true);
+
+        boolean actual = carModelServiceImpl.deleteById(id);
+        assertEquals(expected, actual);
+
+        verify(carModelDAO).deleteById(anyLong());
     }
 
 }

@@ -3,7 +3,9 @@ package dev.andrylat.carsharing.services.implementations;
 import dev.andrylat.carsharing.dao.RentSessionDAO;
 import dev.andrylat.carsharing.models.RentSession;
 import dev.andrylat.carsharing.services.RentSessionService;
-import dev.andrylat.carsharing.services.validators.Validator;
+import dev.andrylat.carsharing.services.validators.RentSessionValidator;
+import dev.andrylat.carsharing.services.validators.ObjectValidator;
+import dev.andrylat.carsharing.services.validators.ParametersValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,32 +27,40 @@ public class RentSessionsServiceImpl implements RentSessionService {
 
     @Override
     public List<RentSession> getAll(int pageNumber, int pageSize) {
-        Validator.validatePageNumber(pageNumber);
-        Validator.validatePageSize(pageSize);
+        ParametersValidator.validatePageNumber(pageNumber);
+        ParametersValidator.validatePageSize(pageSize);
 
         return rentSessionDAO.getAll(pageNumber, pageSize);
     }
 
     @Override
     public RentSession getById(long id) {
-        Validator.validateRecordId(id);
+        ParametersValidator.validateRecordId(id);
 
         return rentSessionDAO.getById(id);
     }
 
     @Override
     public RentSession add(RentSession objectToAdd) {
-        return null;
+        ObjectValidator<RentSession> validator = new RentSessionValidator();
+        validator.validate(objectToAdd);
+
+        return rentSessionDAO.add(objectToAdd);
     }
 
     @Override
     public boolean updateById(RentSession updatedObject) {
-        return false;
+        ObjectValidator<RentSession> validator = new RentSessionValidator();
+        validator.validate(updatedObject);
+
+        return rentSessionDAO.updateById(updatedObject);
     }
 
     @Override
     public boolean deleteById(long id) {
-        return false;
+        ParametersValidator.validateRecordId(id);
+
+        return rentSessionDAO.deleteById(id);
     }
 
 }

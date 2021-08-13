@@ -1,9 +1,14 @@
 package dev.andrylat.carsharing.models;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 public class CarBrand {
     private long id;
+
+    @NotEmpty(message = "Car brand name should not be empty")
+    @Size(min = 2, max = 20, message = "Car brand name should be between 2 and 20 characters long")
     private String name;
 
     public CarBrand() {

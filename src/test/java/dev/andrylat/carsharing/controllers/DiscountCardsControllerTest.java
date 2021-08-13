@@ -2,6 +2,9 @@ package dev.andrylat.carsharing.controllers;
 
 import dev.andrylat.carsharing.models.DiscountCard;
 import dev.andrylat.carsharing.services.DiscountCardService;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,11 +14,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.exceptions.base.MockitoException;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.util.NestedServletException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,6 +32,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,15 +43,6 @@ class DiscountCardsControllerTest {
 
     @InjectMocks
     private DiscountCardsController discountCardsController;
-
-    @Captor
-    private ArgumentCaptor<Integer> pageNumberCaptor;
-
-    @Captor
-    private ArgumentCaptor<Integer> pageSizeCaptor;
-
-    @Captor
-    private ArgumentCaptor<Long> idCaptor;
 
     private MockMvc mockMvc;
     private long recordsNumber;
@@ -102,8 +99,8 @@ class DiscountCardsControllerTest {
     public void getAll_ShouldReturnRecords_WhenQueryParametersAreAbsent() throws Exception {
         int pageSize = 10;
 
-        when(discountCardService.getAll(anyInt(), anyInt())).thenReturn(discountCards);
         when(discountCardService.getRecordsNumber()).thenReturn(recordsNumber);
+        when(discountCardService.getAll(anyInt(), anyInt())).thenReturn(discountCards);
 
         mockMvc.perform(get("/discountcards"))
                 .andExpect(status().isOk())
@@ -113,20 +110,16 @@ class DiscountCardsControllerTest {
                 .andExpect(model().attribute("pageNumber", pageNumber))
                 .andExpect(model().attribute("pageSize", pageSize));
 
-        verify(discountCardService).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
-
-        assertThat(pageNumberCaptor.getValue(), is(pageNumber));
-        assertThat(pageSizeCaptor.getValue(), is(pageSize));
-
         verify(discountCardService).getRecordsNumber();
+        verify(discountCardService).getAll(anyInt(), anyInt());
     }
 
     @Test
     public void getAll_ShouldReturnRecords_WhenQueryParametersArePresent() throws Exception {
         int pageSize = 5;
 
-        when(discountCardService.getAll(anyInt(), anyInt())).thenReturn(discountCards);
         when(discountCardService.getRecordsNumber()).thenReturn(recordsNumber);
+        when(discountCardService.getAll(anyInt(), anyInt())).thenReturn(discountCards);
 
         mockMvc.perform(get("/discountcards?pageNumber=0&pageSize=5"))
                 .andExpect(status().isOk())
@@ -136,12 +129,8 @@ class DiscountCardsControllerTest {
                 .andExpect(model().attribute("pageNumber", pageNumber))
                 .andExpect(model().attribute("pageSize", pageSize));
 
-        verify(discountCardService).getAll(pageNumberCaptor.capture(), pageSizeCaptor.capture());
-
-        assertThat(pageNumberCaptor.getValue(), is(pageNumber));
-        assertThat(pageSizeCaptor.getValue(), is(pageSize));
-
         verify(discountCardService).getRecordsNumber();
+        verify(discountCardService).getAll(anyInt(), anyInt());
     }
 
     @Test
@@ -168,9 +157,147 @@ class DiscountCardsControllerTest {
                 .andExpect(view().name("discountcards/getById"))
                 .andExpect(model().attribute("discountCard", expected));
 
-        verify(discountCardService).getById(idCaptor.capture());
+        verify(discountCardService).getById(anyLong());
+    }
 
-        assertThat(idCaptor.getValue(), is(1L));
+    @Test
+    public void showAdditionForm_ShouldShowAdditionForm_WhenUrlIsValid() throws Exception {
+        DiscountCard expected = new DiscountCard();
+
+        mockMvc.perform(get("/discountcards/add"))
+                .andExpect(view().name("discountcards/add"))
+                .andExpect(model().attribute("discountCard", expected));
+    }
+
+    @Test
+    public void add_ShouldReturnAdditionForm_WhenAddedObjectIsInvalid() throws Exception {
+        DiscountCard expected = new DiscountCard();
+        expected.setDiscountValue(0);
+        expected.setCardNumber("");
+
+        mockMvc.perform(post("/discountcards/add")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(EntityUtils.toString(new UrlEncodedFormEntity(Arrays.asList(
+                                new BasicNameValuePair("discountValue", "0"),
+                                new BasicNameValuePair("cardNumber", "")
+                        )))))
+                .andExpect(status().isOk())
+                .andExpect(view().name("discountcards/add"))
+                .andExpect(model().attribute("discountCard", expected));
+
+        verify(discountCardService, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldAddObject_WhenAddedObjectIsValid() throws Exception {
+        DiscountCard expected = new DiscountCard();
+        expected.setCardNumber("8267bacb06d2");
+        expected.setDiscountValue(6);
+
+        when(discountCardService.add(any())).thenReturn(discountCard);
+
+        mockMvc.perform(post("/discountcards/add")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(EntityUtils.toString(new UrlEncodedFormEntity(List.of(
+                                new BasicNameValuePair("cardNumber", "8267bacb06d2"),
+                                new BasicNameValuePair("discountValue", "6")
+                        )))))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/discountcards/1"))
+                .andExpect(model().attribute("discountCard", expected));
+
+        verify(discountCardService).add(any());
+    }
+
+    @Test
+    public void showUpdatingForm_ShouldThrowException_WhenPathParameterIsInvalid() {
+        when(discountCardService.getById(anyLong())).thenThrow(MockitoException.class);
+
+        assertThrows(NestedServletException.class,
+                () -> mockMvc.perform(get("/discountcards/-1/edit")));
+
+        verify(discountCardService).getById(anyLong());
+    }
+
+    @Test
+    public void showUpdatingForm_ShouldShowUpdatingForm_WhenPathParameterIsValid() throws Exception {
+        DiscountCard expected = new DiscountCard();
+        expected.setId(1L);
+        expected.setCardNumber("8267bacb06d2");
+        expected.setDiscountValue(6);
+
+        when(discountCardService.getById(anyLong())).thenReturn(discountCard);
+
+        mockMvc.perform(get("/discountcards/1/edit"))
+                .andExpect(view().name("discountcards/edit"))
+                .andExpect(model().attribute("discountCard", expected));
+
+        verify(discountCardService).getById(anyLong());
+    }
+
+    @Test
+    public void updateById_ShouldReturnUpdatingForm_WhenUpdatedObjectIsInvalid() throws Exception {
+        DiscountCard expected = new DiscountCard();
+        expected.setId(0L);
+        expected.setCardNumber("");
+        expected.setDiscountValue(-1);
+
+        mockMvc.perform(post("/discountcards/edit")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(EntityUtils.toString(new UrlEncodedFormEntity(Arrays.asList(
+                                new BasicNameValuePair("id", "0"),
+                                new BasicNameValuePair("cardNumber", ""),
+                                new BasicNameValuePair("discountValue", "-1")
+                        )))))
+                .andExpect(status().isOk())
+                .andExpect(view().name("discountcards/edit"))
+                .andExpect(model().attribute("discountCard", expected));
+
+        verify(discountCardService, never()).add(any());
+    }
+
+    @Test
+    public void updateById_ShouldUpdateObject_WhenUpdatedObjectIsValid() throws Exception {
+        DiscountCard expected = new DiscountCard();
+        expected.setId(1L);
+        expected.setCardNumber("8267bacb06d2");
+        expected.setDiscountValue(6);
+
+        when(discountCardService.updateById(any())).thenReturn(true);
+
+        mockMvc.perform(post("/discountcards/edit")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(EntityUtils.toString(new UrlEncodedFormEntity(List.of(
+                                new BasicNameValuePair("id", "1"),
+                                new BasicNameValuePair("cardNumber", "8267bacb06d2"),
+                                new BasicNameValuePair("discountValue", "6")
+                        )))))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/discountcards/1"))
+                .andExpect(model().attribute("discountCard", expected));
+
+        verify(discountCardService).updateById(any());
+    }
+
+    @Test
+    public void deleteById_ShouldThrowException_WhenPathParameterIsInvalid() {
+        when(discountCardService.deleteById(anyLong())).thenThrow(MockitoException.class);
+
+        assertThrows(NestedServletException.class,
+                () -> mockMvc.perform(post("/discountcards/-1/delete")));
+
+        verify(discountCardService).deleteById(anyLong());
+    }
+
+    @Test
+    public void deleteById_ShouldDeleteRecord_WhenPathParameterIsValid() throws Exception {
+        when(discountCardService.deleteById(anyLong())).thenReturn(true);
+
+        mockMvc.perform(post("/discountcards/1/delete"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/discountcards"));
+
+        verify(discountCardService).deleteById(anyLong());
     }
 
 }

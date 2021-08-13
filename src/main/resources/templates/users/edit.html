@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update user</title>
+</head>
+
+<body>
+<form th:object="${user}" th:action="@{/users/edit}" th:method="post">
+    <input type="hidden" th:field="*{id}" id="id">
+    <label for="email">Enter user email: </label>
+    <input type="email" th:field="*{email}" id="email"/>
+    <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
+
+    <br/>
+
+    <label for="password">Enter password: </label>
+    <input type="text" th:field="*{password}" id="password"/>
+    <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
+
+    <br/>
+
+    <div th:if="${user.getType()=='customer'}">
+        <label for="discountCardId">Enter user discount card id: </label>
+        <input type="text" th:field="*{discountCardId}" id="discountCardId"/>
+        <div style="color:red" th:if="${#fields.hasErrors('discountCardId')}" th:errors="*{discountCardId}">Discount
+            Card Id Error
+        </div>
+    </div>
+
+    <div th:if="${user.getType()=='manager'}">
+    <input type="hidden" th:name="discountCardId" th:value="-1" id="discountCardId">
+    </div>
+
+    <br/>
+
+    <label for="type">Enter user type: </label>
+    <input type="text" th:field="*{type}" id="type"/>
+    <div style="color:red" th:if="${#fields.hasErrors('type')}" th:errors="*{type}">Type Error</div>
+
+    <br/>
+
+
+    <input type="submit" value="Update"/>
+</form>
+</body>
+</html>

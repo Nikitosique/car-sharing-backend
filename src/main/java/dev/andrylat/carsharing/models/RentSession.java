@@ -2,11 +2,22 @@ package dev.andrylat.carsharing.models;
 
 import org.postgresql.util.PGInterval;
 
+import javax.validation.constraints.*;
+import java.util.Objects;
+
 public class RentSession {
     private long id;
+
+    @Positive(message = "Customer id should be positive integer")
     private long customerId;
+
+    @Positive(message = "Car id should be positive integer")
     private long carId;
+
+    @Positive(message = "Car id should be positive integer")
     private int rentSessionCost;
+
+    @NotNull(message = "Rent time interval shouldn't be null")
     private PGInterval rentTimeInterval;
 
     public long getId() {
@@ -65,7 +76,7 @@ public class RentSession {
                 && customerId == rentSession.customerId
                 && carId == rentSession.carId
                 && rentSessionCost == rentSession.rentSessionCost
-                && rentTimeInterval.equals(rentSession.rentTimeInterval);
+                && Objects.equals(rentTimeInterval, rentSession.rentTimeInterval);
     }
 
     @Override

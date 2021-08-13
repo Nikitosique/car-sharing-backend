@@ -17,12 +17,14 @@
         </thead>
         <tbody>
         <tr th:each="fuelType : ${fuelTypes}">
-            <td><span th:text="${fuelType.getId}"> Id </span></td>
+            <td><a th:href="@{/fueltypes/__${fuelType.getId}__}">
+                <text th:text="${fuelType.getId}">Id</text>
+            </a>
+            </td>
             <td><span th:text="${fuelType.getName}"> Name </span></td>
         </tr>
         </tbody>
     </table>
-
     </br>
 
     <text>Please choose page number</text>
@@ -45,7 +47,6 @@
             </text>
         </div>
     </div>
-
     </br>
 
     <div th:if="${pageNumber + 1 < (0.0 + recordsNumber) / pageSize}">
@@ -60,6 +61,12 @@
 <div th:if="${fuelTypes.size} == 0">
     <text>There are no more records. You can</text>
     <a th:href="@{/fueltypes(pageNumber=0, pageSize=${pageSize})}">return to the first page</a>
+</div>
+
+<div th:unless="${fuelTypes.size} == 0">
+    <form th:method="get" th:action="@{/fueltypes/add}">
+        <input type="submit" value="Add fuel type"/>
+    </form>
 </div>
 </body>
 

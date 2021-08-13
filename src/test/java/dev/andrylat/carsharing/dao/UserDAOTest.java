@@ -61,7 +61,7 @@ class UserDAOTest {
         user.setId(1);
         user.setEmail("user1@gmail.com");
         user.setPassword("3NreW8R");
-        user.setDiscountCardId(1);
+        user.setDiscountCardId(1L);
         user.setType("customer");
         expected.add(user);
 
@@ -69,7 +69,7 @@ class UserDAOTest {
         user.setId(2);
         user.setEmail("user2@gmail.com");
         user.setPassword("2345qwerty");
-        user.setDiscountCardId(2);
+        user.setDiscountCardId(2L);
         user.setType("customer");
         expected.add(user);
 
@@ -94,7 +94,7 @@ class UserDAOTest {
         expected.setId(1);
         expected.setEmail("user1@gmail.com");
         expected.setPassword("3NreW8R");
-        expected.setDiscountCardId(1);
+        expected.setDiscountCardId(1L);
         expected.setType("customer");
 
         User actual = userDAO.getById(1);
@@ -108,13 +108,13 @@ class UserDAOTest {
         expected.setId(4);
         expected.setEmail("user4@gmail.com");
         expected.setPassword("C04jq9b");
-        expected.setDiscountCardId(4);
+        expected.setDiscountCardId(4L);
         expected.setType("customer");
 
         User added = new User();
         added.setEmail("user4@gmail.com");
         added.setPassword("C04jq9b");
-        added.setDiscountCardId(4);
+        added.setDiscountCardId(4L);
         added.setType("customer");
 
         User actual = userDAO.add(added);
@@ -130,7 +130,7 @@ class UserDAOTest {
         updatedUser.setId(0);
         updatedUser.setEmail("user1@gmail.com");
         updatedUser.setPassword("Xo9eOes");
-        updatedUser.setDiscountCardId(1);
+        updatedUser.setDiscountCardId(1L);
         updatedUser.setType("customer");
 
         boolean actual = userDAO.updateById(updatedUser);
@@ -146,7 +146,7 @@ class UserDAOTest {
         updatedUser.setId(1);
         updatedUser.setEmail("firstUser@mail.com");
         updatedUser.setPassword("12345678");
-        updatedUser.setDiscountCardId(1);
+        updatedUser.setDiscountCardId(1L);
         updatedUser.setType("customer");
 
         boolean actual = userDAO.updateById(updatedUser);
@@ -287,6 +287,73 @@ class UserDAOTest {
         long managerId = 3;
 
         boolean actual = userDAO.unassignCustomerFromManager(customerId, managerId);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:initalscripts/dao/user/CustomerManagerTableCreation.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAssignmentsNumber_ShouldReturnZero_WhenTableIsEmpty() {
+        long expected = 0;
+
+        long customerId = 1;
+        long managerId = 3;
+
+        long actual = userDAO.getAssignmentsNumber(customerId, managerId);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:initalscripts/dao/user/CustomerManagerTableCreation.sql",
+            "classpath:initalscripts/dao/user/CustomerManagerDataInsertion.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAssignmentsNumber_ShouldReturnZero_WhenCustomerAndManagerWithSuchIdNotExist() {
+        long expected = 0;
+
+        long customerId = 100;
+        long managerId = 300;
+
+        long actual = userDAO.getAssignmentsNumber(customerId, managerId);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:initalscripts/dao/user/CustomerManagerTableCreation.sql",
+            "classpath:initalscripts/dao/user/CustomerManagerDataInsertion.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAssignmentsNumber_ShouldReturnZero_WhenCustomerIsNotAssignedToManager() {
+        long expected = 0;
+
+        long customerId = 1;
+        long managerId = 31;
+
+        long actual = userDAO.getAssignmentsNumber(customerId, managerId);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:initalscripts/dao/user/CustomerManagerTableCreation.sql",
+            "classpath:initalscripts/dao/user/CustomerManagerDataInsertion.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:initalscripts/dao/user/CustomerManagerTableDropping.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAssignmentsNumber_ShouldReturnNumber_WhenCustomerIsAssignedToManager() {
+        long expected = 1;
+
+        long customerId = 1;
+        long managerId = 3;
+
+        long actual = userDAO.getAssignmentsNumber(customerId, managerId);
 
         assertEquals(expected, actual);
     }

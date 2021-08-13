@@ -1,15 +1,12 @@
 package dev.andrylat.carsharing.models;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.util.Objects;
 
 public class BodyType {
-    @NotNull
-    @Min(1)
     private long id;
 
-    @NotNull
+    @NotEmpty(message = "Body type name shouldn't be empty")
     private String name;
 
     public BodyType() {

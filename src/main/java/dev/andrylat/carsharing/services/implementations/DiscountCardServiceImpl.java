@@ -3,7 +3,9 @@ package dev.andrylat.carsharing.services.implementations;
 import dev.andrylat.carsharing.dao.DiscountCardDAO;
 import dev.andrylat.carsharing.models.DiscountCard;
 import dev.andrylat.carsharing.services.DiscountCardService;
-import dev.andrylat.carsharing.services.validators.Validator;
+import dev.andrylat.carsharing.services.validators.DiscountCardValidator;
+import dev.andrylat.carsharing.services.validators.ObjectValidator;
+import dev.andrylat.carsharing.services.validators.ParametersValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,32 +27,40 @@ public class DiscountCardServiceImpl implements DiscountCardService {
 
     @Override
     public List<DiscountCard> getAll(int pageNumber, int pageSize) {
-        Validator.validatePageNumber(pageNumber);
-        Validator.validatePageSize(pageSize);
+        ParametersValidator.validatePageNumber(pageNumber);
+        ParametersValidator.validatePageSize(pageSize);
 
         return discountCardDAO.getAll(pageNumber, pageSize);
     }
 
     @Override
     public DiscountCard getById(long id) {
-        Validator.validateRecordId(id);
+        ParametersValidator.validateRecordId(id);
 
         return discountCardDAO.getById(id);
     }
 
     @Override
     public DiscountCard add(DiscountCard objectToAdd) {
-        return null;
+        ObjectValidator<DiscountCard> validator = new DiscountCardValidator();
+        validator.validate(objectToAdd);
+
+        return discountCardDAO.add(objectToAdd);
     }
 
     @Override
     public boolean updateById(DiscountCard updatedObject) {
-        return false;
+        ObjectValidator<DiscountCard> validator = new DiscountCardValidator();
+        validator.validate(updatedObject);
+
+        return discountCardDAO.updateById(updatedObject);
     }
 
     @Override
     public boolean deleteById(long id) {
-        return false;
+        ParametersValidator.validateRecordId(id);
+
+        return discountCardDAO.deleteById(id);
     }
 
 }

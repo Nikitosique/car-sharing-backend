@@ -1,6 +1,7 @@
 package dev.andrylat.carsharing.services.implementations;
 
 import dev.andrylat.carsharing.dao.FuelTypeDAO;
+import dev.andrylat.carsharing.exceptions.ObjectValidationException;
 import dev.andrylat.carsharing.exceptions.QueryParametersMismatchException;
 import dev.andrylat.carsharing.models.FuelType;
 import org.junit.jupiter.api.BeforeEach;
@@ -111,6 +112,97 @@ class FuelTypeServiceImplTest {
         assertEquals(expected, actual);
 
         verify(fuelTypeDAO).getById(anyLong());
+    }
+
+    @Test
+    public void add_ShouldThrowException_WhenAddedObjectIsNull() {
+        FuelType objectToAdd = null;
+
+        assertThrows(ObjectValidationException.class, () -> fuelTypeServiceImpl.add(objectToAdd));
+
+        verify(fuelTypeDAO, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldThrowException_WhenAddedObjectIsInvalid() {
+        FuelType objectToAdd = new FuelType();
+        objectToAdd.setId(1L);
+        objectToAdd.setName("");
+
+        assertThrows(ObjectValidationException.class, () -> fuelTypeServiceImpl.add(objectToAdd));
+
+        verify(fuelTypeDAO, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldAddObject_WhenAddedObjectIsValid() {
+        FuelType objectToAdd = new FuelType();
+        objectToAdd.setName("gasoline");
+
+        FuelType expected = new FuelType(1L, "gasoline");
+
+        when(fuelTypeDAO.add(any())).thenReturn(fuelType);
+
+        FuelType actual = fuelTypeServiceImpl.add(objectToAdd);
+        assertEquals(expected, actual);
+
+        verify(fuelTypeDAO).add(any());
+    }
+
+    @Test
+    public void updateById_ShouldThrowException_WhenUpdatedObjectIsNull() {
+        FuelType objectToUpdate = null;
+
+        assertThrows(ObjectValidationException.class, () -> fuelTypeServiceImpl.updateById(objectToUpdate));
+
+        verify(fuelTypeDAO, never()).updateById(any());
+    }
+
+    @Test
+    public void updateById_ShouldThrowException_WhenUpdatedObjectIsInvalid() {
+        FuelType objectToUpdate = new FuelType();
+        objectToUpdate.setId(1L);
+        objectToUpdate.setName("");
+
+        assertThrows(ObjectValidationException.class, () -> fuelTypeServiceImpl.updateById(objectToUpdate));
+
+        verify(fuelTypeDAO, never()).updateById(any());
+    }
+
+    @Test
+    public void updateById_ShouldUpdateObject_WhenUpdatedObjectIsValid() {
+        FuelType objectToUpdate = new FuelType(1L, "gasoline");
+
+        boolean expected = true;
+
+        when(fuelTypeDAO.updateById(any())).thenReturn(true);
+
+        boolean actual = fuelTypeServiceImpl.updateById(objectToUpdate);
+        assertEquals(expected, actual);
+
+        verify(fuelTypeDAO).updateById(any());
+    }
+
+    @Test
+    public void deleteById_ShouldThrowException_WhenMethodParameterIsInvalid() {
+        long id = -1L;
+
+        assertThrows(QueryParametersMismatchException.class, () -> fuelTypeServiceImpl.deleteById(id));
+
+        verify(fuelTypeDAO, never()).deleteById(anyLong());
+    }
+
+    @Test
+    public void deleteById_DeleteRecord_WhenMethodParameterIsValid() {
+        long id = 1L;
+        boolean expected = true;
+
+        when(fuelTypeDAO.deleteById(anyLong())).thenReturn(true);
+
+        boolean actual = fuelTypeServiceImpl.deleteById(id);
+        assertEquals(expected, actual);
+
+        verify(fuelTypeDAO).deleteById(anyLong());
     }
 
 }

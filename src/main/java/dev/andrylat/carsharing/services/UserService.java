@@ -12,5 +12,7 @@ public interface UserService extends CrudService<User> {
     boolean assignCustomerToManager(long customerId, long managerId);
 
     boolean unassignCustomerFromManager(long customerId, long managerId);
-    
+
+    boolean checkUserAssignedToManager(long customerId, long managerId);
+
 }

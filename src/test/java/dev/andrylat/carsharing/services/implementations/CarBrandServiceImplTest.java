@@ -1,6 +1,7 @@
 package dev.andrylat.carsharing.services.implementations;
 
 import dev.andrylat.carsharing.dao.CarBrandDAO;
+import dev.andrylat.carsharing.exceptions.ObjectValidationException;
 import dev.andrylat.carsharing.exceptions.QueryParametersMismatchException;
 import dev.andrylat.carsharing.models.CarBrand;
 import org.junit.jupiter.api.BeforeEach;
@@ -101,8 +102,8 @@ class CarBrandServiceImplTest {
 
     @Test
     void getById_ShouldReturnRecord_WhenMethodParameterIsValid() {
-        long id = 1L;
         CarBrand expected = new CarBrand(1, "nissan");
+        long id = 1L;
 
         when(carBrandDAO.getById(anyLong())).thenReturn(carBrand);
 
@@ -110,6 +111,92 @@ class CarBrandServiceImplTest {
         assertEquals(expected, actual);
 
         verify(carBrandDAO).getById(anyLong());
+    }
+
+    @Test
+    public void add_ShouldThrowException_WhenAddedObjectIsNull() {
+        CarBrand objectToAdd = null;
+
+        assertThrows(ObjectValidationException.class, () -> carBrandServiceImpl.add(objectToAdd));
+
+        verify(carBrandDAO, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldThrowException_WhenAddedObjectIsInvalid() {
+        CarBrand objectToAdd = new CarBrand(1L, "");
+
+        assertThrows(ObjectValidationException.class, () -> carBrandServiceImpl.add(objectToAdd));
+
+        verify(carBrandDAO, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldAddObject_WhenAddedObjectIsValid() {
+        CarBrand objectToAdd = new CarBrand();
+        objectToAdd.setName("nissan");
+
+        CarBrand expected = new CarBrand(1L, "nissan");
+
+        when(carBrandDAO.add(any())).thenReturn(carBrand);
+
+        CarBrand actual = carBrandServiceImpl.add(objectToAdd);
+        assertEquals(expected, actual);
+
+        verify(carBrandDAO).add(any());
+    }
+
+    @Test
+    public void updateById_ShouldThrowException_WhenUpdatedObjectIsNull() {
+        CarBrand objectToUpdate = null;
+
+        assertThrows(ObjectValidationException.class, () -> carBrandServiceImpl.updateById(objectToUpdate));
+
+        verify(carBrandDAO, never()).updateById(any());
+    }
+
+    @Test
+    public void updateById_ShouldThrowException_WhenUpdatedObjectIsInvalid() {
+        CarBrand objectToUpdate = new CarBrand(1L, "");
+
+        assertThrows(ObjectValidationException.class, () -> carBrandServiceImpl.updateById(objectToUpdate));
+
+        verify(carBrandDAO, never()).updateById(any());
+    }
+
+    @Test
+    public void updateById_ShouldUpdateObject_WhenUpdatedObjectIsValid() {
+        CarBrand objectToUpdate = new CarBrand(1L, "nissan");
+        boolean expected = true;
+
+        when(carBrandDAO.updateById(any())).thenReturn(true);
+
+        boolean actual = carBrandServiceImpl.updateById(objectToUpdate);
+        assertEquals(expected, actual);
+
+        verify(carBrandDAO).updateById(any());
+    }
+
+    @Test
+    public void deleteById_ShouldThrowException_WhenMethodParameterIsInvalid() {
+        long id = -1L;
+
+        assertThrows(QueryParametersMismatchException.class, () -> carBrandServiceImpl.deleteById(id));
+
+        verify(carBrandDAO, never()).deleteById(anyLong());
+    }
+
+    @Test
+    public void deleteById_DeleteRecord_WhenMethodParameterIsValid() {
+        long id = 1L;
+        boolean expected = true;
+
+        when(carBrandDAO.deleteById(anyLong())).thenReturn(true);
+
+        boolean actual = carBrandServiceImpl.deleteById(id);
+        assertEquals(expected, actual);
+
+        verify(carBrandDAO).deleteById(anyLong());
     }
 
 }

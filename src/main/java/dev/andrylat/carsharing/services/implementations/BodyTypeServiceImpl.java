@@ -3,7 +3,9 @@ package dev.andrylat.carsharing.services.implementations;
 import dev.andrylat.carsharing.dao.BodyTypeDAO;
 import dev.andrylat.carsharing.models.BodyType;
 import dev.andrylat.carsharing.services.BodyTypeService;
-import dev.andrylat.carsharing.services.validators.Validator;
+import dev.andrylat.carsharing.services.validators.BodyTypeValidator;
+import dev.andrylat.carsharing.services.validators.ObjectValidator;
+import dev.andrylat.carsharing.services.validators.ParametersValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,32 +27,40 @@ public class BodyTypeServiceImpl implements BodyTypeService {
 
     @Override
     public List<BodyType> getAll(int pageNumber, int pageSize) {
-        Validator.validatePageNumber(pageNumber);
-        Validator.validatePageSize(pageSize);
+        ParametersValidator.validatePageNumber(pageNumber);
+        ParametersValidator.validatePageSize(pageSize);
 
         return bodyTypeDAO.getAll(pageNumber, pageSize);
     }
 
     @Override
     public BodyType getById(long id) {
-        Validator.validateRecordId(id);
+        ParametersValidator.validateRecordId(id);
 
         return bodyTypeDAO.getById(id);
     }
 
     @Override
     public BodyType add(BodyType objectToAdd) {
-        return null;
+        ObjectValidator<BodyType> validator = new BodyTypeValidator();
+        validator.validate(objectToAdd);
+
+        return bodyTypeDAO.add(objectToAdd);
     }
 
     @Override
     public boolean updateById(BodyType updatedObject) {
-        return false;
+        ObjectValidator<BodyType> validator = new BodyTypeValidator();
+        validator.validate(updatedObject);
+
+        return bodyTypeDAO.updateById(updatedObject);
     }
 
     @Override
     public boolean deleteById(long id) {
-        return false;
+        ParametersValidator.validateRecordId(id);
+
+        return bodyTypeDAO.deleteById(id);
     }
 
 }

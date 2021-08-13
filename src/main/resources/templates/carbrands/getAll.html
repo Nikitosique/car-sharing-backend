@@ -17,12 +17,14 @@
         </thead>
         <tbody>
         <tr th:each="carBrand : ${carBrands}">
-            <td><span th:text="${carBrand.getId}"> Id </span></td>
+            <td><a th:href="@{/carbrands/__${carBrand.getId}__}">
+                <text th:text="${carBrand.getId}">Id</text>
+            </a>
+            </td>
             <td><span th:text="${carBrand.getName}"> Name </span></td>
         </tr>
         </tbody>
     </table>
-
     </br>
 
     <text>Please choose page number</text>
@@ -45,7 +47,6 @@
             </text>
         </div>
     </div>
-
     </br>
 
     <div th:if="${pageNumber + 1 < (0.0 + recordsNumber) / pageSize}">
@@ -60,6 +61,13 @@
 <div th:if="${carBrands.size} == 0">
     <text>There are no more records. You can</text>
     <a th:href="@{/carbrands(pageNumber=0, pageSize=${pageSize})}">return to the first page</a>
+</div>
+</br>
+
+<div th:unless="${carBrands.size} == 0">
+    <form th:method="get" th:action="@{/carbrands/add}">
+        <input type="submit" value="Add car brand"/>
+    </form>
 </div>
 </body>
 

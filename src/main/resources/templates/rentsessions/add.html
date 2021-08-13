@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New rent session</title>
+</head>
+
+<body>
+<form th:method="post" th:action="@{/rentsessions/add}" th:object="${rentSession}">
+    <label for="customerId">Enter customer id: </label>
+    <input type="number" th:field="*{customerId}" id="customerId"/>
+    <div style="color:red" th:if="${#fields.hasErrors('customerId')}" th:errors="*{customerId}">
+        Model id error
+    </div>
+    <br/>
+
+    <label for="carId">Enter car id: </label>
+    <input type="number" th:field="*{carId}" id="carId"/>
+    <div style="color:red" th:if="${#fields.hasErrors('carId')}" th:errors="*{carId}">
+        Rent cost per minute error
+    </div>
+    <br/>
+
+    <label for="rentSessionCost">Enter rent session cost</label>
+    <input type="number" th:field="*{rentSessionCost}" id="rentSessionCost"/>
+    <div style="color:red" th:if="${#fields.hasErrors('rentSessionCost')}" th:errors="*{rentSessionCost}">
+        Registration plate error
+    </div>
+    <br/>
+
+    <label for="rentTimeInterval">Enter rent time interval </label>
+    <input type="text" th:field="*{rentTimeInterval}" id="rentTimeInterval"/>
+    <div style="color:red" th:if="${#fields.hasErrors('rentTimeInterval')}" th:errors="*{rentTimeInterval}">
+        Color error
+    </div>
+    <br/>
+
+    <input type="submit" value="Add new car"/>
+</form>
+</body>
+</html>

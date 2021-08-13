@@ -13,5 +13,19 @@
 <p th:text="${'Rent session cost: ' + rentSession.getRentSessionCost}">Rent session cost</p>
 <p th:text="${'Rent time interval: ' + rentSession.getRentTimeInterval}">Rent time interval</p>
 
+<form th:method="get" th:action="@{/rentsessions/__${rentSession.getId}__/edit}">
+    <input type="submit" value="Edit record"/>
+</form>
+<br>
+
+<form th:method="post" th:action="@{/rentsessions/__${rentSession.getId}__/delete}">
+    <input type="submit" value="Delete record"/>
+</form>
+<br>
+
+<form th:method="get" th:action="@{/rentsessions}">
+    <input type="submit" value="Back to the table"/>
+</form>
 </body>
+
 </html>

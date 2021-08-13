@@ -15,5 +15,20 @@
 <p th:text="${'Engine Displacement: ' + carModel.getEngineDisplacement}">Engine Displacement</p>
 <p th:text="${'Name: ' + carModel.getName}">Name</p>
 <p th:text="${'Gearbox Type: ' + carModel.getGearboxType}">Gearbox Type</p>
+
+<form th:method="get" th:action="@{/carmodels/__${carModel.getId}__/edit}">
+    <input type="submit" value="Edit record"/>
+</form>
+<br>
+
+<form th:method="post" th:action="@{/carmodels/__${carModel.getId}__/delete}">
+    <input type="submit" value="Delete record"/>
+</form>
+<br>
+
+<form th:method="get" th:action="@{/carmodels}">
+    <input type="submit" value="Back to the table"/>
+</form>
 </body>
+
 </html>

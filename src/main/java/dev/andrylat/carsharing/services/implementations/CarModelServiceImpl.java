@@ -3,7 +3,9 @@ package dev.andrylat.carsharing.services.implementations;
 import dev.andrylat.carsharing.dao.CarModelDAO;
 import dev.andrylat.carsharing.models.CarModel;
 import dev.andrylat.carsharing.services.CarModelService;
-import dev.andrylat.carsharing.services.validators.Validator;
+import dev.andrylat.carsharing.services.validators.CarModelValidator;
+import dev.andrylat.carsharing.services.validators.ObjectValidator;
+import dev.andrylat.carsharing.services.validators.ParametersValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,32 +27,40 @@ public class CarModelServiceImpl implements CarModelService {
 
     @Override
     public List<CarModel> getAll(int pageNumber, int pageSize) {
-        Validator.validatePageNumber(pageNumber);
-        Validator.validatePageSize(pageSize);
+        ParametersValidator.validatePageNumber(pageNumber);
+        ParametersValidator.validatePageSize(pageSize);
 
         return carModelDAO.getAll(pageNumber, pageSize);
     }
 
     @Override
     public CarModel getById(long id) {
-        Validator.validateRecordId(id);
+        ParametersValidator.validateRecordId(id);
 
         return carModelDAO.getById(id);
     }
 
     @Override
     public CarModel add(CarModel objectToAdd) {
-        return null;
+        ObjectValidator<CarModel> validator = new CarModelValidator();
+        validator.validate(objectToAdd);
+
+        return carModelDAO.add(objectToAdd);
     }
 
     @Override
     public boolean updateById(CarModel updatedObject) {
-        return false;
+        ObjectValidator<CarModel> validator = new CarModelValidator();
+        validator.validate(updatedObject);
+
+        return carModelDAO.updateById(updatedObject);
     }
 
     @Override
     public boolean deleteById(long id) {
-        return false;
+        ParametersValidator.validateRecordId(id);
+
+        return carModelDAO.deleteById(id);
     }
 
 }

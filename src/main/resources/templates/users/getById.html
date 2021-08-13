@@ -12,6 +12,27 @@
 <p th:text="${'Email: ' + user.getEmail}">Email</p>
 <p th:text="${'Password: ' + user.getPassword()}">Password</p>
 <p th:text="${'Type: ' + user.getType}">Type</p>
+
+<div th:if="${user.getType=='manager'}">
+    <form th:method="get" th:action="@{/users/managers/__${user.getId}__}">
+        <input type="submit" value="Show assigned customers"/>
+    </form>
+</div>
+<br>
+
+<form th:method="get" th:action="@{/users/__${user.getId}__/edit}">
+    <input type="submit" value="Edit record"/>
+</form>
+<br>
+
+<form th:method="post" th:action="@{/users/__${user.getId}__/delete}">
+    <input type="submit" value="Delete record"/>
+</form>
+<br>
+
+<form th:method="get" th:action="@{/users}">
+    <input type="submit" value="Back to the table"/>
+</form>
 </body>
 
 </html>
