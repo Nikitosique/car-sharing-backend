@@ -1,12 +1,26 @@
 package dev.andrylat.carsharing.models;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 public class User {
     private long id;
-    private long discountCardId;
+
+    @NotNull(message = "Discount Card Id shouldn't be empty")
+    private Long discountCardId;
+
+    @Email(message = "Email is incorrect")
+    @NotEmpty(message = "Email shouldn't be empty")
     private String email;
+
+    @NotEmpty(message = "Password shouldn't be empty")
     private String password;
+
+    @NotEmpty(message = "User type shouldn't be empty")
+    @Pattern(regexp = "(is|customer|manager)", message = "User type should be customer or manager")
     private String type;
 
     public long getId() {
@@ -17,11 +31,11 @@ public class User {
         this.id = id;
     }
 
-    public long getDiscountCardId() {
+    public Long getDiscountCardId() {
         return discountCardId;
     }
 
-    public void setDiscountCardId(long discountCardId) {
+    public void setDiscountCardId(Long discountCardId) {
         this.discountCardId = discountCardId;
     }
 
@@ -62,7 +76,7 @@ public class User {
         User user = (User) other;
 
         return id == user.id
-                && discountCardId == user.discountCardId
+                && Objects.equals(discountCardId, user.discountCardId)
                 && Objects.equals(email, user.email)
                 && Objects.equals(password, user.password)
                 && Objects.equals(type, user.type);
@@ -73,7 +87,7 @@ public class User {
         int result = 17;
 
         result = 31 * result + (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (discountCardId ^ (discountCardId >>> 32));
+        result = 31 * result + (discountCardId == null ? 0 : discountCardId.hashCode());
         result = 31 * result + (email == null ? 0 : email.hashCode());
         result = 31 * result + (password == null ? 0 : password.hashCode());
         result = 31 * result + (type == null ? 0 : type.hashCode());

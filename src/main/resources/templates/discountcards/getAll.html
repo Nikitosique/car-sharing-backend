@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Discount Cards</title>
+    <style>
+        .layer {
+            overflow: scroll;
+            width: 600px;
+            height: 30px;
+            padding: 5px;
+            border: solid 1px black;
+        }
+    </style>
+</head>
+
+<body>
+<div th:unless="${discountCards.size} == 0">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Discount Value</th>
+            <th>Card Number</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="discountCard : ${discountCards}">
+            <div th:if="${discountCard.getId()}!=-1">
+                <td><a th:href="@{/discountcards/__${discountCard.getId}__}">
+                    <text th:text="${discountCard.getId}">Id</text>
+                </a></td>
+                <td><span th:text="${discountCard.getDiscountValue}"> Discount Value </span></td>
+                <td><span th:text="${discountCard.getCardNumber}"> Card Number </span></td>
+            </div>
+        </tr>
+        </tbody>
+    </table>
+    </br>
+
+    <text>Please choose page number</text>
+    <div class="layer">
+        <div th:if="${((recordsNumber + 0.0) / pageSize - (recordsNumber) / pageSize) > 0}">
+            <div th:with="del = ${(recordsNumber + 0.0) / pageSize}">
+                <text th:each="i : ${#numbers.sequence(0, del)}">
+                    <a th:href="@{/discountcards(pageNumber=${i}, pageSize=${pageSize})}">
+                        <text th:text="${i + 1}"></text>
+                    </a>
+                </text>
+            </div>
+        </div>
+
+        <div th:if="${(((recordsNumber + 0.0) / pageSize) - ((recordsNumber) / pageSize)) == 0}">
+            <div th:with="del = ${(recordsNumber + 0.0) / pageSize - 1}">
+                <text th:each="i : ${#numbers.sequence(0, del)}">
+                    <a th:href="@{/discountcards(pageNumber=${i}, pageSize=${pageSize})}">
+                        <text th:text="${i + 1}"></text>
+                    </a>
+                </text>
+            </div>
+        </div>
+    </div>
+    </br>
+
+    <div th:if="${pageNumber + 1 < (0.0 + recordsNumber) / pageSize}">
+        <a th:href="@{/discountcards(pageNumber=${pageNumber+1}, pageSize=${pageSize})}">Next page</a>
+    </div>
+
+    <div th:if="${pageNumber} != 0 and ${discountCards.size} != 0">
+        <a th:href="@{/discountcards(pageNumber=${pageNumber - 1}, pageSize=${pageSize})}">Previous page</a>
+    </div>
+</div>
+
+<div th:if="${discountCards.size} == 0">
+    <text>There are no more records. You can</text>
+    <a th:href="@{/discountcards(pageNumber=0, pageSize=${pageSize})}">return to the first page</a>
+</div>
+
+<div th:unless="${discountCards.size} == 0">
+    <form th:method="get" th:action="@{/discountcards/add}">
+        <input type="submit" value="Add discount card"/>
+    </form>
+</div>
+</body>
+
+</html>

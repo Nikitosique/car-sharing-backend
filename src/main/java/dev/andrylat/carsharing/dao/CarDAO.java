@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Component
 public class CarDAO {
+    private static final String GET_CARS_NUMBER_SQL_QUERY = "SELECT COUNT(*) FROM cars";
     private static final String GET_ALL_CARS_SQL_QUERY = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_CAR_BY_ID_SQL_QUERY = "SELECT * FROM cars WHERE id=?";
     private static final String DELETE_CAR_BY_ID_SQL_QUERY = "DELETE FROM cars WHERE id=?";
@@ -30,6 +31,10 @@ public class CarDAO {
     @Autowired
     public CarDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public long getRecordsNumber() {
+        return jdbcTemplate.queryForObject(GET_CARS_NUMBER_SQL_QUERY, Long.class);
     }
 
     public List<Car> getAll(int pageNumber, int pageSize) {

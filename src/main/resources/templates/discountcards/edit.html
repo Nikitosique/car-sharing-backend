@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update body type</title>
+</head>
+
+<body>
+<form th:object="${discountCard}" th:action="@{/discountcards/edit}" th:method="post">
+    <input type="hidden" th:field="*{id}" id="id">
+
+    <label for="discountValue">Enter discount value: </label>
+    <input type="number" th:field="*{discountValue}" id="discountValue"/>
+    <div style="color:red" th:if="${#fields.hasErrors('discountValue')}" th:errors="*{discountValue}">Discount Value
+        Error
+    </div>
+    <br/>
+
+    <label for="cardNumber">Enter discount card number: </label>
+    <input type="text" th:field="*{cardNumber}" id="cardNumber"/>
+    <div style="color:red" th:if="${#fields.hasErrors('cardNumber')}" th:errors="*{cardNumber}">Card Number Error</div>
+    <br/>
+
+    <input type="submit" value="Update"/>
+</form>
+</body>
+
+</html>

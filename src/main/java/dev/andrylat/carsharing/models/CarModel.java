@@ -1,15 +1,36 @@
 package dev.andrylat.carsharing.models;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 import java.util.Objects;
 
 public class CarModel {
     private long id;
+
+    @Positive(message = "Car body type id should be positive integer")
     private long bodyId;
+
+    @Positive(message = "Car brand id should be positive integer")
     private long brandId;
+
+    @Positive(message = "Car fuel type id should be positive integer")
     private long fuelId;
+
+    @Positive(message = "Car production year should be positive integer")
+    @Min(value = 2010, message = "Car is too old. Only cars produced after 2010 can be accepted")
     private int productionYear;
+
+    @Positive(message = "Car engine displacement year should be positive number")
+    @Min(value = 1, message = "Minimal car engine displacement is 1 litre")
     private double engineDisplacement;
+
+    @NotEmpty(message = "Car model name type shouldn't be empty")
     private String name;
+
+    @NotEmpty(message = "Car gearbox type shouldn't be empty")
+    @Pattern(regexp = "(is|automatic|manual)", message = "Car gearbox type should be automatic or manual")
     private String gearboxType;
 
     public long getId() {

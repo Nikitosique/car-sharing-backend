@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New car</title>
+</head>
+
+<body>
+<form th:method="post" th:action="@{/cars/add}" th:object="${car}">
+    <label for="modelId">Enter car model id: </label>
+    <input type="number" th:field="*{modelId}" id="modelId"/>
+    <div style="color:red" th:if="${#fields.hasErrors('modelId')}" th:errors="*{modelId}">
+        Model id error
+    </div>
+    <br/>
+
+    <label for="rentCostPerMin">Enter car rent cost per minute (in USD cents): </label>
+    <input type="number" th:field="*{rentCostPerMin}" id="rentCostPerMin"/>
+    <div style="color:red" th:if="${#fields.hasErrors('rentCostPerMin')}" th:errors="*{rentCostPerMin}">
+        Rent cost per minute error
+    </div>
+    <br/>
+
+    <label for="registrationPlate">Enter car registration plate </label>
+    <input type="text" th:field="*{registrationPlate}" id="registrationPlate"/>
+    <div style="color:red" th:if="${#fields.hasErrors('registrationPlate')}" th:errors="*{registrationPlate}">
+        Registration plate error
+    </div>
+    <br/>
+
+    <label for="color">Enter car color </label>
+    <input type="text" th:field="*{color}" id="color"/>
+    <div style="color:red" th:if="${#fields.hasErrors('color')}" th:errors="*{color}">
+        Color error
+    </div>
+    <br/>
+
+    <label for="photo">Enter car color </label>
+    <input type="text" th:field="*{photo}" id="photo"/>
+    <div style="color:red" th:if="${#fields.hasErrors('photo')}" th:errors="*{photo}">
+        Photo error
+    </div>
+    <br/>
+
+    <input type="submit" value="Add new car"/>
+</form>
+</body>
+
+</html>

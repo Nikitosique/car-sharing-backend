@@ -28,6 +28,22 @@ class FuelTypeDAOTest {
     @Test
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql({"classpath:initalscripts/dao/fueltype/FuelTypeDataDeletion.sql"})
+    public void getRecordsNumber_ShouldReturnZero_WhenTableIsEmpty() {
+        long expected = 0;
+        long actual = fuelTypeDAO.getRecordsNumber();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getRecordsNumber_ShouldReturnRecordsNumber_WhenTableIsNotEmpty() {
+        long expected = 3;
+        long actual = fuelTypeDAO.getRecordsNumber();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    @Sql({"classpath:initalscripts/dao/fueltype/FuelTypeDataDeletion.sql"})
     public void getAll_ShouldReturnZeroRecords_WhenTableIsEmpty() {
         List<FuelType> expected = new ArrayList<>();
 

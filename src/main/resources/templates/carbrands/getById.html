@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Car Brand</title>
+</head>
+
+<body>
+<p th:text="${'ID: ' + carBrand.getId()}">ID</p>
+<p th:text="${'Name: ' + carBrand.getName()}">Name</p>
+
+<form th:method="get" th:action="@{/carbrands/__${carBrand.getId}__/edit}">
+    <input type="submit" value="Edit record"/>
+</form>
+<br>
+
+<form th:method="post" th:action="@{/carbrands/__${carBrand.getId}__/delete}">
+    <input type="submit" value="Delete record"/>
+</form>
+<br>
+
+<form th:method="get" th:action="@{/carbrands}">
+    <input type="submit" value="Back to the table"/>
+</form>
+</body>
+
+</html>

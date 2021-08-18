@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New body type</title>
+</head>
+
+<body>
+<form th:method="post" th:action="@{/bodytypes/add}" th:object="${bodyType}">
+    <label for="name">Enter body type name: </label>
+    <input type="text" th:field="*{name}" id="name"/>
+    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+    <br/>
+    <input type="submit" value="Add new body type"/>
+</form>
+</body>
+
+</html>

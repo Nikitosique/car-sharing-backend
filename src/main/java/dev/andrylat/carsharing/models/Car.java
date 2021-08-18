@@ -1,13 +1,24 @@
 package dev.andrylat.carsharing.models;
 
+import javax.validation.constraints.*;
 import java.util.Objects;
 
 public class Car {
     private long id;
+
+    @Positive(message = "Car model id should be positive integer")
     private long modelId;
+
+    @Min(value = 3, message = "Rent cost per minute should be higher than 0.03 USD")
     private int rentCostPerMin;
+
+    @NotEmpty(message = "Registration plate shouldn't be empty")
     private String registrationPlate;
+
+    @NotEmpty(message = "Color shouldn't be empty")
     private String color;
+
+    @NotEmpty(message = "Photo shouldn't be empty")
     private String photo;
 
     public long getId() {

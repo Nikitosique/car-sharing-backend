@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New discount card</title>
+</head>
+
+<body>
+<form th:method="post" th:action="@{/discountcards/add}" th:object="${discountCard}">
+    <label for="discountValue">Enter discount value: </label>
+    <input type="number" th:field="*{discountValue}" id="discountValue"/>
+    <div style="color:red" th:if="${#fields.hasErrors('discountValue')}" th:errors="*{discountValue}">Discount Value Error</div>
+    <br/>
+
+    <label for="cardNumber">Enter discount card number: </label>
+    <input type="text" th:field="*{cardNumber}" id="cardNumber"/>
+    <div style="color:red" th:if="${#fields.hasErrors('cardNumber')}" th:errors="*{cardNumber}">Card Number Error</div>
+    <br/>
+
+    <input type="submit" value="Add new car model"/>
+</form>
+</body>
+
+</html>

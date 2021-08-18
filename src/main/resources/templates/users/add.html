@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New user</title>
+</head>
+
+<body>
+<form th:method="get" th:action="@{/users/add/customer}">
+    <input type="submit" value="Add customer"/>
+</form>
+
+</br>
+
+<form th:method="get" th:action="@{/users/add/manager}">
+    <input type="submit" value="Add manager"/>
+</form>
+</body>
+
+</html>

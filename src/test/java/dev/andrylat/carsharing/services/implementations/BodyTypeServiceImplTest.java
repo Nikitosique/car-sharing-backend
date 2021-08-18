@@ -1,6 +1,7 @@
 package dev.andrylat.carsharing.services.implementations;
 
 import dev.andrylat.carsharing.dao.BodyTypeDAO;
+import dev.andrylat.carsharing.exceptions.ObjectValidationException;
 import dev.andrylat.carsharing.exceptions.QueryParametersMismatchException;
 import dev.andrylat.carsharing.models.BodyType;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +27,7 @@ class BodyTypeServiceImplTest {
     private BodyTypeDAO bodyTypeDAO;
 
     @InjectMocks
-    private BodyTypeServiceImpl bodyTypeService;
+    private BodyTypeServiceImpl bodyTypeServiceImpl;
 
     private BodyType bodyType;
     private List<BodyType> bodyTypes;
@@ -42,11 +43,11 @@ class BodyTypeServiceImplTest {
 
     @Test
     public void getRecordsNumber_ShouldReturnZero_WhenTableIsEmpty() {
-        long expected = 0;
+        long expected = 0L;
 
         when(bodyTypeDAO.getRecordsNumber()).thenReturn(0L);
 
-        long actual = bodyTypeService.getRecordsNumber();
+        long actual = bodyTypeServiceImpl.getRecordsNumber();
         assertEquals(expected, actual);
 
         verify(bodyTypeDAO).getRecordsNumber();
@@ -55,11 +56,11 @@ class BodyTypeServiceImplTest {
     @Test
     public void getRecordsNumber_ShouldReturnRecordsNumber_WhenTableIsNotEmpty() {
         long recordsNumber = bodyTypes.size();
-        long expected = 2;
+        long expected = 2L;
 
         when(bodyTypeDAO.getRecordsNumber()).thenReturn(recordsNumber);
 
-        long actual = bodyTypeService.getRecordsNumber();
+        long actual = bodyTypeServiceImpl.getRecordsNumber();
         assertEquals(expected, actual);
 
         verify(bodyTypeDAO).getRecordsNumber();
@@ -70,7 +71,7 @@ class BodyTypeServiceImplTest {
         int pageNumber = -1;
         int pageSize = -1;
 
-        assertThrows(QueryParametersMismatchException.class, () -> bodyTypeService.getAll(pageNumber, pageSize));
+        assertThrows(QueryParametersMismatchException.class, () -> bodyTypeServiceImpl.getAll(pageNumber, pageSize));
 
         verify(bodyTypeDAO, never()).getAll(anyInt(), anyInt());
     }
@@ -86,7 +87,7 @@ class BodyTypeServiceImplTest {
 
         when(bodyTypeDAO.getAll(anyInt(), anyInt())).thenReturn(bodyTypes);
 
-        List<BodyType> actual = bodyTypeService.getAll(pageNumber, pageSize);
+        List<BodyType> actual = bodyTypeServiceImpl.getAll(pageNumber, pageSize);
         assertEquals(expected, actual);
 
         verify(bodyTypeDAO).getAll(anyInt(), anyInt());
@@ -94,9 +95,9 @@ class BodyTypeServiceImplTest {
 
     @Test
     void getById_ShouldThrownException_WhenMethodParameterIsInvalid() {
-        long id = -1;
+        long id = -1L;
 
-        assertThrows(QueryParametersMismatchException.class, () -> bodyTypeService.getById(id));
+        assertThrows(QueryParametersMismatchException.class, () -> bodyTypeServiceImpl.getById(id));
 
         verify(bodyTypeDAO, never()).getById(anyLong());
     }
@@ -108,11 +109,100 @@ class BodyTypeServiceImplTest {
 
         when(bodyTypeDAO.getById(anyLong())).thenReturn(bodyType);
 
-
-        BodyType actual = bodyTypeService.getById(id);
+        BodyType actual = bodyTypeServiceImpl.getById(id);
         assertEquals(expected, actual);
 
         verify(bodyTypeDAO).getById(anyLong());
+    }
+
+    @Test
+    public void add_ShouldThrowException_WhenAddedObjectIsNull() {
+        BodyType objectToAdd = null;
+
+        assertThrows(ObjectValidationException.class, () -> bodyTypeServiceImpl.add(objectToAdd));
+
+        verify(bodyTypeDAO, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldThrowException_WhenAddedObjectIsInvalid() {
+        BodyType objectToAdd = new BodyType();
+        objectToAdd.setId(1L);
+        objectToAdd.setName("");
+
+        assertThrows(ObjectValidationException.class, () -> bodyTypeServiceImpl.add(objectToAdd));
+
+        verify(bodyTypeDAO, never()).add(any());
+    }
+
+    @Test
+    public void add_ShouldAddObject_WhenAddedObjectIsValid() {
+        BodyType objectToAdd = new BodyType();
+        objectToAdd.setName("sedan");
+
+        BodyType expected = new BodyType(1L, "sedan");
+
+        when(bodyTypeDAO.add(any())).thenReturn(bodyType);
+
+        BodyType actual = bodyTypeServiceImpl.add(objectToAdd);
+        assertEquals(expected, actual);
+
+        verify(bodyTypeDAO).add(any());
+    }
+
+    @Test
+    public void updateById_ShouldThrowException_WhenUpdatedObjectIsNull() {
+        BodyType objectToUpdate = null;
+
+        assertThrows(ObjectValidationException.class, () -> bodyTypeServiceImpl.updateById(objectToUpdate));
+
+        verify(bodyTypeDAO, never()).updateById(any());
+    }
+
+    @Test
+    public void updateById_ShouldThrowException_WhenUpdatedObjectIsInvalid() {
+        BodyType objectToUpdate = new BodyType();
+        objectToUpdate.setId(1L);
+        objectToUpdate.setName("");
+
+        assertThrows(ObjectValidationException.class, () -> bodyTypeServiceImpl.updateById(objectToUpdate));
+
+        verify(bodyTypeDAO, never()).updateById(any());
+    }
+
+    @Test
+    public void updateById_ShouldUpdateObject_WhenUpdatedObjectIsValid() {
+        BodyType objectToUpdate = new BodyType(1L, "sedan");
+        boolean expected = true;
+
+        when(bodyTypeDAO.updateById(any())).thenReturn(true);
+
+        boolean actual = bodyTypeServiceImpl.updateById(objectToUpdate);
+        assertEquals(expected, actual);
+
+        verify(bodyTypeDAO).updateById(any());
+    }
+
+    @Test
+    public void deleteById_ShouldThrowException_WhenMethodParameterIsInvalid() {
+        long id = -1L;
+
+        assertThrows(QueryParametersMismatchException.class, () -> bodyTypeServiceImpl.deleteById(id));
+
+        verify(bodyTypeDAO, never()).deleteById(anyLong());
+    }
+
+    @Test
+    public void deleteById_DeleteRecord_WhenMethodParameterIsValid() {
+        long id = 1L;
+        boolean expected = true;
+
+        when(bodyTypeDAO.deleteById(anyLong())).thenReturn(true);
+
+        boolean actual = bodyTypeServiceImpl.deleteById(id);
+        assertEquals(expected, actual);
+
+        verify(bodyTypeDAO).deleteById(anyLong());
     }
 
 }

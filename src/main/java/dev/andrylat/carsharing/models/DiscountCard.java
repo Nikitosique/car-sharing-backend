@@ -1,10 +1,18 @@
 package dev.andrylat.carsharing.models;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
 
 public class DiscountCard {
     private long id;
+
+    @Min(value = 0, message = "Minimal discount value is 0%")
+    @Max(value = 15, message = "Maximal discount value is 15%")
     private int discountValue;
+
+    @NotEmpty(message = "Discount card number shouldn't be empty")
     private String cardNumber;
 
     public long getId() {

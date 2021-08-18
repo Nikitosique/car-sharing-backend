@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New car brand</title>
+</head>
+
+<body>
+<form th:method="post" th:action="@{/carbrands/add}" th:object="${carBrand}">
+    <label for="name">Enter car brand name: </label>
+    <input type="text" th:field="*{name}" id="name"/>
+    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+    <br/>
+
+    <input type="submit" value="Add new car brand"/>
+</form>
+</body>
+
+</html>

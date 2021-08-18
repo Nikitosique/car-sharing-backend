@@ -1,9 +1,12 @@
 package dev.andrylat.carsharing.models;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
 
 public class FuelType {
     private long id;
+
+    @NotEmpty(message = "Fuel type name should not be empty")
     private String name;
 
     public FuelType() {

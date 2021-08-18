@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update fuel type</title>
+</head>
+
+<body>
+<form th:object="${fuelType}" th:action="@{/fueltypes/edit}" th:method="post">
+    <input type="hidden" th:field="*{id}" id="id">
+    <label for="name">Enter name: </label>
+    <input type="text" th:field="*{name}" id="name"/>
+    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+    <br/>
+    <input type="submit" value="Update"/>
+</form>
+</body>
+
+</html>

@@ -5,59 +5,60 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ValidatorTest {
+class ParametersValidatorTest {
     @Test
     void validatePageNumber_ShouldThrownException_WhenPageNumberIsNegativeInteger() {
         int pageNumber = -1;
-        assertThrows(QueryParametersMismatchException.class, () -> Validator.validatePageNumber(pageNumber));
+        assertThrows(QueryParametersMismatchException.class,
+                () -> ParametersValidator.validatePageNumber(pageNumber));
     }
 
     @Test
     void validatePageNumber_ShouldThrownNoException_WhenPageNumberIsZero() {
         int pageNumber = 0;
-        Validator.validatePageNumber(pageNumber);
+        assertDoesNotThrow(() -> ParametersValidator.validatePageNumber(pageNumber));
     }
 
     @Test
     void validatePageNumber_ShouldThrownNoException_WhenPageNumberIsPositiveInteger() {
         int pageNumber = 1;
-        Validator.validatePageNumber(pageNumber);
+        assertDoesNotThrow(() -> ParametersValidator.validatePageNumber(pageNumber));
     }
 
     @Test
     void validatePageSize_ShouldThrownException_WhenPageSizeIsNegativeInteger() {
         int pageSize = -1;
-        assertThrows(QueryParametersMismatchException.class, () -> Validator.validatePageSize(pageSize));
+        assertThrows(QueryParametersMismatchException.class, () -> ParametersValidator.validatePageSize(pageSize));
     }
 
     @Test
     void validatePageSize_ShouldThrownException_WhenPageSizeIsZero() {
         int pageSize = 0;
-        assertThrows(QueryParametersMismatchException.class, () -> Validator.validatePageSize(pageSize));
+        assertThrows(QueryParametersMismatchException.class, () -> ParametersValidator.validatePageSize(pageSize));
     }
 
     @Test
     void validatePageSize_ShouldThrownNoException_WhenPageSizeIsPositiveInteger() {
         int pageSize = 1;
-        Validator.validatePageSize(pageSize);
+        assertDoesNotThrow(() -> ParametersValidator.validatePageSize(pageSize));
     }
 
     @Test
     void validateRecordId_ShouldThrownException_WhenRecordIsNegativeInteger() {
         int recordId = -1;
-        assertThrows(QueryParametersMismatchException.class, () -> Validator.validateRecordId(recordId));
+        assertThrows(QueryParametersMismatchException.class, () -> ParametersValidator.validateRecordId(recordId));
     }
 
     @Test
     void validateRecordId_ShouldThrownException_WhenRecordIsZero() {
         int recordId = 0;
-        assertThrows(QueryParametersMismatchException.class, () -> Validator.validateRecordId(recordId));
+        assertThrows(QueryParametersMismatchException.class, () -> ParametersValidator.validateRecordId(recordId));
     }
 
     @Test
     void validateRecordId_ShouldThrownNoException_WhenRecordIsPositiveInteger() {
         int recordId = 1;
-        Validator.validateRecordId(recordId);
+        assertDoesNotThrow(() -> ParametersValidator.validateRecordId(recordId));
     }
 
 }

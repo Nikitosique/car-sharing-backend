@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Car Model</title>
+</head>
+
+<body>
+<p th:text="${'ID: ' + carModel.getId()}">ID</p>
+<p th:text="${'Body Id: ' + carModel.getBodyId}">Body Id</p>
+<p th:text="${'Brand Id: ' + carModel.getBrandId}">Brand Id</p>
+<p th:text="${'Fuel Id: ' + carModel.getFuelId}">Fuel Id</p>
+<p th:text="${'Production year: ' + carModel.getProductionYear}">Production year</p>
+<p th:text="${'Engine Displacement: ' + carModel.getEngineDisplacement}">Engine Displacement</p>
+<p th:text="${'Name: ' + carModel.getName}">Name</p>
+<p th:text="${'Gearbox Type: ' + carModel.getGearboxType}">Gearbox Type</p>
+
+<form th:method="get" th:action="@{/carmodels/__${carModel.getId}__/edit}">
+    <input type="submit" value="Edit record"/>
+</form>
+<br>
+
+<form th:method="post" th:action="@{/carmodels/__${carModel.getId}__/delete}">
+    <input type="submit" value="Delete record"/>
+</form>
+<br>
+
+<form th:method="get" th:action="@{/carmodels}">
+    <input type="submit" value="Back to the table"/>
+</form>
+</body>
+
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Assign customer to manager</title>
+</head>
+
+<body>
+<form th:method="post" th:action="@{/users/managers/assign}">
+    <label for="customerId">Enter customer id: </label>
+    <input type="number" th:value="${customerId}" name="customerId"/>
+    <label for="managerId">Enter manager id: </label>
+    <input type="number" th:value="${managerId}" name="managerId"/>
+    <button type="submit">Assign</button>
+</form>
+</body>
+
+</html>

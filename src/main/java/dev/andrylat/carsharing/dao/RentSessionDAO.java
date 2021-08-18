@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Component
 public class RentSessionDAO {
+    private static final String GET_RENT_SESSIONS_NUMBER_SQL_QUERY = "SELECT COUNT(*) FROM rent_sessions";
     private static final String GET_ALL_RENT_SESSIONS_SQL_QUERY = "SELECT * FROM rent_sessions ORDER BY id LIMIT ? OFFSET ?";
     private static final String GET_RENT_SESSION_BY_ID_SQL_QUERY = "SELECT * FROM rent_sessions WHERE id=?";
     private static final String DELETE_RENT_SESSION_BY_ID_SQL_QUERY = "DELETE FROM rent_sessions WHERE id=?";
@@ -30,6 +31,10 @@ public class RentSessionDAO {
     @Autowired
     public RentSessionDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public long getRecordsNumber() {
+        return jdbcTemplate.queryForObject(GET_RENT_SESSIONS_NUMBER_SQL_QUERY, Long.class);
     }
 
     public List<RentSession> getAll(int pageNumber, int pageSize) {

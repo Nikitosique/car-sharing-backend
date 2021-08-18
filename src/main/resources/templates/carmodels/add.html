@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New car model</title>
+</head>
+
+<body>
+<form th:method="post" th:action="@{/carmodels/add}" th:object="${carModel}">
+    <label for="bodyId">Enter body type id: </label>
+    <input type="number" th:field="*{bodyId}" id="bodyId"/>
+    <div style="color:red" th:if="${#fields.hasErrors('bodyId')}" th:errors="*{bodyId}">Body Id Error</div>
+    <br/>
+
+    <label for="brandId">Enter brand id: </label>
+    <input type="number" th:field="*{brandId}" id="brandId"/>
+    <div style="color:red" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandId}">Brand Id Error</div>
+    <br/>
+
+    <label for="fuelId">Enter car fuel id: </label>
+    <input type="number" th:field="*{fuelId}" id="fuelId"/>
+    <div style="color:red" th:if="${#fields.hasErrors('fuelId')}" th:errors="*{fuelId}">Fuel Id Error</div>
+    <br/>
+
+    <label for="productionYear">Enter car production year: </label>
+    <input type="number" th:field="*{productionYear}" id="productionYear"/>
+    <div style="color:red" th:if="${#fields.hasErrors('productionYear')}" th:errors="*{productionYear}">Car Production Error</div>
+    <br/>
+
+    <label for="engineDisplacement">Enter car engine displacement: </label>
+    <input type="text" th:field="*{engineDisplacement}" id="engineDisplacement"/>
+    <div style="color:red" th:if="${#fields.hasErrors('engineDisplacement')}" th:errors="*{engineDisplacement}">Engine Displacement Error</div>
+    <br/>
+
+    <label for="name">Enter car name: </label>
+    <input type="text" th:field="*{name}" id="name"/>
+    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+    <br/>
+
+    <label for="gearboxType">Enter car gearbox type: </label>
+    <input type="text" th:field="*{gearboxType}" id="gearboxType"/>
+    <div style="color:red" th:if="${#fields.hasErrors('gearboxType')}" th:errors="*{gearboxType}">Gearbox Type Error</div>
+    <br/>
+
+    <input type="submit" value="Add new car model"/>
+</form>
+</body>
+
+</html>
