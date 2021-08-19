@@ -3,6 +3,8 @@ package dev.andrylat.carsharing.services.validators;
 import dev.andrylat.carsharing.exceptions.ObjectValidationException;
 import dev.andrylat.carsharing.models.RentSession;
 import org.postgresql.util.PGInterval;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -12,6 +14,7 @@ import java.util.Set;
 
 public class RentSessionValidator implements ObjectValidator<RentSession> {
     private static final String INVALID_TIME_INTERVAL_VALUE = "0 years 0 mons 0 days 0 hours 0 mins 0.0 secs";
+    private static final Logger LOGGER = LoggerFactory.getLogger("validatorsLogger");
 
     @Override
     public void validate(RentSession rentSession) {
@@ -21,6 +24,8 @@ public class RentSessionValidator implements ObjectValidator<RentSession> {
 
         checkTimeInterval(rentSession);
         checkConstraintsViolations(rentSession);
+
+        LOGGER.debug("Rent session object was successfully validated");
     }
 
     private void checkConstraintsViolations(RentSession rentSession) {

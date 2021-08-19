@@ -2,6 +2,8 @@ package dev.andrylat.carsharing.services.validators;
 
 import dev.andrylat.carsharing.exceptions.ObjectValidationException;
 import dev.andrylat.carsharing.models.CarModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -10,6 +12,8 @@ import javax.validation.ValidatorFactory;
 import java.util.Set;
 
 public class CarModelValidator implements ObjectValidator<CarModel> {
+    private static final Logger LOGGER = LoggerFactory.getLogger("validatorsLogger");
+
     @Override
     public void validate(CarModel carModel) {
         if (carModel == null) {
@@ -17,6 +21,8 @@ public class CarModelValidator implements ObjectValidator<CarModel> {
         }
 
         checkConstraintsViolations(carModel);
+
+        LOGGER.debug("Car model object was successfully validated");
     }
 
     private void checkConstraintsViolations(CarModel carModel) {

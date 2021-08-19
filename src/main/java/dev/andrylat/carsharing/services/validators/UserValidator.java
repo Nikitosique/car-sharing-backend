@@ -2,6 +2,8 @@ package dev.andrylat.carsharing.services.validators;
 
 import dev.andrylat.carsharing.exceptions.ObjectValidationException;
 import dev.andrylat.carsharing.models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -10,6 +12,7 @@ import javax.validation.ValidatorFactory;
 import java.util.Set;
 
 public class UserValidator implements ObjectValidator<User> {
+    private static final Logger LOGGER = LoggerFactory.getLogger("validatorsLogger");
 
     @Override
     public void validate(User user) {
@@ -19,6 +22,8 @@ public class UserValidator implements ObjectValidator<User> {
 
         checkUserCardCompatibility(user);
         checkConstraintsViolations(user);
+
+        LOGGER.debug("User object was successfully validated");
     }
 
     private void checkUserCardCompatibility(User user) {
@@ -29,7 +34,7 @@ public class UserValidator implements ObjectValidator<User> {
                     + "Manager shouldn't have a discount card");
         }
 
-        if ("customer".equals(user.getType()) && discountCardId == 0) {
+        if ("customer".equals(user.getType()) && discountCardId <= 0) {
             throw new ObjectValidationException("Inserted/updated user is invalid. "
                     + "Customer should have a discount card");
         }
