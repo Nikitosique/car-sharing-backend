@@ -2,6 +2,8 @@ package dev.andrylat.carsharing.services.validators;
 
 import dev.andrylat.carsharing.exceptions.ObjectValidationException;
 import dev.andrylat.carsharing.models.DiscountCard;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -10,6 +12,8 @@ import javax.validation.ValidatorFactory;
 import java.util.Set;
 
 public class DiscountCardValidator implements ObjectValidator<DiscountCard> {
+    private static final Logger LOGGER = LoggerFactory.getLogger("validatorsLogger");
+
     @Override
     public void validate(DiscountCard discountCard) {
         if (discountCard == null) {
@@ -17,6 +21,8 @@ public class DiscountCardValidator implements ObjectValidator<DiscountCard> {
         }
 
         checkConstraintsViolations(discountCard);
+
+        LOGGER.debug("Discount card object was successfully validated");
     }
 
     private void checkConstraintsViolations(DiscountCard discountCard) {

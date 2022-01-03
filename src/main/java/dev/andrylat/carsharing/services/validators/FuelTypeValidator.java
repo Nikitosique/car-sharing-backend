@@ -3,6 +3,8 @@ package dev.andrylat.carsharing.services.validators;
 import dev.andrylat.carsharing.exceptions.ObjectValidationException;
 import dev.andrylat.carsharing.models.FuelType;
 import dev.andrylat.carsharing.models.FuelType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -11,6 +13,8 @@ import javax.validation.ValidatorFactory;
 import java.util.Set;
 
 public class FuelTypeValidator implements ObjectValidator<FuelType> {
+    private static final Logger LOGGER = LoggerFactory.getLogger("validatorsLogger");
+
     @Override
     public void validate(FuelType fuelType) {
         if (fuelType == null) {
@@ -18,6 +22,8 @@ public class FuelTypeValidator implements ObjectValidator<FuelType> {
         }
 
         checkConstraintsViolations(fuelType);
+
+        LOGGER.debug("Fuel type object was successfully validated");
     }
 
     private void checkConstraintsViolations(FuelType fuelType) {
